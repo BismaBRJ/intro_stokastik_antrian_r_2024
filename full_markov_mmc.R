@@ -135,7 +135,7 @@ plot(x = pp_arrival,
      ylab = "Kedatangan",
      main = "Simulasi Proses Poisson dengan lambda = 2")
 
-## === Simulasi Birth-Death Process ===
+## === Simulasi Birth-Death Process dengan markovchain ===
 
 bdp_lambda <- 0.5
 bdp_mu <- 0.3
@@ -193,7 +193,7 @@ steadyStates(bdp_obj)
 
 ## === Simulasi M/M/c dengan queuecomputer ===
 
-install.packages("queuecomputer")
+#install.packages("queuecomputer")
 library("queuecomputer")
 
 mmc_lambda <- 5
@@ -214,6 +214,12 @@ mmc_sim <- queue_step(arrivals = mmc_arrival,
                       servers = mmc_c)
 print(mmc_sim)
 summary(mmc_sim)
+
+plot(mmc_sim)[[1]]
+plot(mmc_sim)[[2]]
+plot(mmc_sim)[[3]]
+plot(mmc_sim)[[4]]
+plot(mmc_sim)[[5]]
 
 # data lengkap hasil simulasi
 mmc_sim$departures_df
