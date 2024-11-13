@@ -1,6 +1,6 @@
 # Pengantar Model Stokastik dan Teori Antrian
 
-## === Simulasi dan Analisis DTMC dengan markovchain ===
+# === Simulasi dan Analisis DTMC dengan markovchain ===
 
 #install.packages("markovchain")
 library("markovchain")
@@ -8,14 +8,16 @@ library("markovchain")
 ?matrix
 
 mc1_P <- matrix(
-  c(0.1, 0.9,
-    0.2, 0.8),
-  nrow=2,
+  c(0.5,  0.25, 0.25, 0,
+    0.25, 0.25, 0,    0.5,
+    0.25, 0,    0.25, 0.5,
+    0,    0.4,  0.4,  0.2),
+  nrow=4,
   byrow=TRUE
 )
 mc1_P
 
-mc1_states <- c("Up", "Down")
+mc1_states <- c("0", "1", "2", "3")
 
 mc1_obj <- new("markovchain",
                states = mc1_states,
@@ -28,7 +30,7 @@ plot(mc1_obj)
 mc1_t <- 10
 set.seed(123)
 mc1_sim <- rmarkovchain(n = mc1_t, object = mc1_obj,
-                        t0 = "Up")
+                        t0 = "0")
 mc1_sim
 
 mc1_sim_factors <- factor(mc1_sim, levels = mc1_states)
@@ -122,6 +124,7 @@ pp_n <- 10
 set.seed(2024)
 # bilangan random sebanyak pp_n dari distribusi Exp(pp_lambda):
 pp_interarrival <- rexp(pp_n, rate = pp_lambda)
+pp_interarrival
 # jumlahan kumulatif
 pp_arrival <- cumsum(pp_interarrival)
 
@@ -270,9 +273,9 @@ legend("topright",
 #install.packages("queueing")
 library("queueing")
 
-mmc_lambda
-mmc_mu
-mmc_c
+mmc_lambda <- 30
+mmc_mu <- 12
+mmc_c <- 3
 
 ?NewInput.MMC
 mmc_input <- NewInput.MMC(
