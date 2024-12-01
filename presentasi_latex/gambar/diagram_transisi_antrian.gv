@@ -1,0 +1,24 @@
+digraph G {
+    rankdir=LR
+    n0 [label="0"];
+    n1 [label="1"];
+    n2 [label="2"];
+    n3 [label="3"];
+    n4 [label="4"];
+    lainnya [label = "...", shape = "plaintext", fontsize = 40]
+    
+    n0 -> n1 [label = "λ₀"];
+    n1 -> n0 [label = "μ₁"];
+    
+    n1 -> n2 [label = "λ₁"];
+    n2 -> n1 [label = "μ₂"];
+    
+    n2 -> n3 [label = "λ₂"];
+    n3 -> n2 [label = "μ₃"];
+    
+    n3 -> n4 [label = "λ₃"];
+    n4 -> n3 [label = "μ₄"];
+    
+    n4 -> lainnya [label = "λ₄"];
+    lainnya -> n4 [label = "μ₅"]
+}

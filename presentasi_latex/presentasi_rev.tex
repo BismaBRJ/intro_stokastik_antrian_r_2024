@@ -1,7 +1,7 @@
 \documentclass{beamer}
 %Information to be included in the title page:
 \title{Model Antrian \textit{Multi-Server:} M/M/c}
-\subtitle{dengan Pengantar Model Stokastik dan Teori Antrian \\ dengan R dan QtsPlus}
+\subtitle{dengan Pengantar Model Stokastik dan Teori Antrian \\ dengan R dan QtsPlus \\ (Revisi)}
 \author{Bisma Rohpanca Joyosumarto (2106635581)}
 \institute{Departemen Matematika FMIPA UI \\ Universitas Indonesia}
 \date{
@@ -33,6 +33,8 @@
 
 \usepackage{hyperref}
 \usepackage{graphicx}
+
+\usepackage{minted}
 % === akhir bismastyle.sty ===
 
 \begin{document}
@@ -45,7 +47,7 @@
 
 \section[Pengantar Model Stokastik dan Teori Antrian. dengan praktik di R]{Pengantar Model Stokastik dan Teori Antrian \\ dengan praktik di R}
 
-\begin{frame}{Teori Antrian dan Model Stokastik}
+\begin{frame}{\textit{Overview:} Teori Antrian dan Model Stokastik}
     \begin{itemize}
         \item Dalam suatu \textbf{antrian \textit{(queue)}}, orang bisa masuk mengantri, dilayani, kemudian meninggalkan antrian
         \item Apabila ada beberapa pelayan, tiap baris/pelayan disebut \textit{server}, sehingga secara keseluruhan, terdapat satu antrian dengan sejumlah \textit{server}
@@ -55,26 +57,29 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Proses Poisson dan Rantai Markov}
+\begin{frame}{\textit{Overview:} Proses Poisson dan Rantai Markov}
     \begin{itemize}
         \item Sifat utama proses Poisson adalah \textbf{sifat Markov} atau \textbf{sifat \textit{memoryless:}} probabilitas kedatangan \textbf{tidak tergantung kapan datangnya}
         \item Proses Poisson adalah contoh \textbf{rantai Markov waktu kontinu} atau \textbf{\textit{continuous-time Markov chain} (CTMC)}
         \item CTMC itu sendiri adalah perumuman dari \textbf{rantai Markov waktu diskrit} atau \textbf{\textit{discrete-time Markov chain} (DTMC)}
+        \item Agar lebih paham dasar statistik untuk teori antrian, termasuk mengapa distribusi Poisson dan distribusi eksponensial sering digunakan, mari kita bahas dari awal!
     \end{itemize}
 \end{frame}
 
 \subsection{Rantai Markov Waktu Diskrit (DTMC)}
 
 \begin{frame}{Definisi DTMC}
-    Secara umum, dalam suatu rantai Markov, ada sejumlah "keadaan" atau \textit{state} yang terhitung (bisa berhingga), ada waktu, dan ada probabilitas berpindah dari satu \textit{state} ke \textit{state} lain.
+    Secara umum, dalam suatu rantai Markov, ada sejumlah kemungkinan "keadaan" \textit{(state)}, ada waktu, dan ada probabilitas berpindah dari suatu \textit{state} ke \textit{state} lain di tiap waktu berikutnya.
 
-    Suatu DTMC, misal \( \braces{X_t} \), terdiri dari
+    Suatu DTMC, misal ditulis \( \braces{X_t} \), terdiri dari
     \begin{itemize}
-        \item Suatu \textit{state space} atau himpunan \textit{state} \( S \), berisi semua kemungkinan "keadaan" atau \textit{state}
-        \item $X_t$ sebagai variabel acak untuk tiap \( t \), yang nilainya bisa berupa \textit{state} apa saja yang ada di \( S \). Sehingga, \( \braces{X_t} \) adalah barisan variabel acak
+        \item Suatu \textit{state space} atau himpunan \textit{state}, misal \( S \), 
+        %berisi semua "keadaan" \textit{(state)} yang mungkin
+        yang terhitung (bisa berhingga)
         \item Himpunan indeks waktu, biasanya \( T = \braces{0, 1, 2, \dots} \)
+        \item $X_t$ sebagai variabel acak untuk tiap \( t \in T \), yang nilainya bisa berupa \textit{state} apapun dari \( S \). Sehingga, \( \braces{X_t} \) adalah barisan variabel acak
     \end{itemize}
-    dan memenuhi \textbf{sifat Markov} atau \textbf{\textit{Markov property}} sebagai berikut:
+    dan memenuhi \textbf{sifat Markov} \textbf{(\textit{Markov property})} atau \textbf{\textit{memoryless property}} sebagai berikut:
     \begin{align*}
         \text{Pr}&\braces{X_{n+1} = j \, \mid \, X_0 = i_0, \, \dots \, X_{n-1} = i_{n-1}, X_n = i} \\
         &= \text{Pr}\braces{X_{n+1} = j \, \mid \, X_n = i}
@@ -128,7 +133,7 @@
         0.25 & 0 & 0.25 & 0.5 \\
         0 & 0.4 & 0.4 & 0.2
     \end{pmatrix} \]
-    Perhatikan bahwa sumasi tiap baris adalah satu. Ini akibat sifat probabilitas. Dari suatu \textit{state} \(i\), dia bisa ke \textit{state} lainnya (atau bahkan tetap di \textit{state} yang sama) dengan probabilitas masing-masing kemungkinan sesuai baris ke-\(i\).
+    Perhatikan bahwa sumasi tiap baris adalah satu. Ini akibat sifat probabilitas. Dari suatu \textit{state} \(i\), dia bisa ke \textit{state} lainnya (atau bahkan tetap di \textit{state} yang sama) dengan probabilitas tiap kemungkinan ke \textit{state} \(j\) sesuai baris ke-\(i\).
 \end{frame}
 
 \begin{frame}{Diagram Transisi untuk Contoh DTMC}
@@ -137,14 +142,40 @@
     \includegraphics[scale=0.5]{gambar/contoh_dtmc.png}
 
     \begin{itemize}
-        \item Tiap simpul melambangkan \textit{state}.
+        \item Tiap simpul melambangkan \textit{state}
         \item Tiap busur dari \(i\) ke \(j\) melambangkan transisi, dengan label \(P_{ij}\)
+        \item Transisi dengan probabilitas nol tidak digambarkan
     \end{itemize}
     \textit{Fun fact:} rantai Markov adalah versi probabilistik dari automata hingga.
 \end{frame}
 
-\begin{frame}{Simulasi dan Analisis DTMC di R}
+\begin{frame}[fragile]{Simulasi dan Analisis DTMC di R}
     Gunakan \textit{package} markovchain
+
+\begin{minted}{r}
+print(0.1 + 0.2)
+?dexp
+dexp(2, lambda = 3)
+\end{minted}
+\end{frame}
+
+\begin{frame}{Iklan: Kuliah Model Stokastik 1}
+    tes
+\end{frame}
+
+\begin{frame}{Perbandingan: Diagram Transisi untuk Antrian}
+    %Sedikit demi sedikit, kita coba lebih memahami teori antrian.
+    Sebagai perbandingan dengan konsep antrian, perhatikan gambar berikut!
+
+    \includegraphics[scale=0.5]{gambar/diagram_transisi_antrian.png}
+
+    Ini adalah diagram transisi yang umum dikenal untuk antrian.
+    \begin{itemize}
+        \item Himpunan \textit{state} \( S = \{ 0, 1, 2, 3, \dots \} \) menyatakan banyaknya orang (yang sedang mengantri) di antrian.
+        \item Probabilitas \( P_{i,i+1} \), yaitu ketika banyaknya orang bertambah satu dari \( i \) (menjadi \( i+1 \) orang), ditulis \( \lambda_i \)
+        \item Probabilitas \( P_{i,i-1} \), yaitu ketika banyaknya orang berkurang satu dari \( i \) (menjadi \( i-1 \) orang), ditulis \( \mu_i \)
+    \end{itemize}
+    Notasi huruf \( \lambda \) tidak sembarangan dipilih...
 \end{frame}
 
 \subsection{Proses Poisson}
@@ -160,13 +191,13 @@
 \end{frame}
 
 \begin{frame}{PMF untuk Distribusi Poisson}
-    \includegraphics[scale=0.4]{gambar/dist_pois_lambda3.png}
+    %\includegraphics[scale=0.4]{gambar/dist_pois_lambda3.png}
 
     Gambar di atas adalah contoh gambar PMF \textit{(probability mass function)} dari distribusi Poisson, yaitu nilai probabilitas untuk tepat \(x\) kemunculan dalam satu satuan waktu:
-    \[ \text{Pr}(X=x) = \frac{e^{-\lambda} \lambda^x}{x} \]
+    \[ \text{Pr}(X=x) = \frac{e^{-\lambda} \lambda^x}{x!} \]
     Contohnya, nilai PMF di \(x=2\) untuk \(\lambda = 3\) orang/menit adalah
-    \[ \text{Pr}(X=2) = \frac{e^{-3} 3^2}{2} \approx 0.2240418 \]
-    yaitu probabilitas datangnya \textbf{tepat dua} orang dalam satu menit.
+    \[ \text{Pr}(X=2) = \frac{e^{-3} 3^2}{2!} \approx 0.2240418 \]
+    yaitu probabilitas datangnya \textbf{tepat dua} orang dalam satu menit, jika rata-rata kedatangan adalah \(\lambda = 3\) orang/menit.
 \end{frame}
 
 \begin{frame}{CDF untuk Distribusi Poisson}
