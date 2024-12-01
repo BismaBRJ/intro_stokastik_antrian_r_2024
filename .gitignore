@@ -19,6 +19,11 @@
 ## some beamer auxiliary files
 *.nav
 *.snm
+### minted in beamer?
+*.vrb
+
+## some minted auxiliary folders
+*/_minted
 
 # more at
 # https://github.com/github/gitignore
