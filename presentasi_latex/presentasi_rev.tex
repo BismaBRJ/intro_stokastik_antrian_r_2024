@@ -1,11 +1,11 @@
 \documentclass{beamer}
-%Information to be included in the title page:
+
 \title{Model Antrian \textit{Multi-Server:} M/M/c}
 \subtitle{dengan Pengantar Model Stokastik dan Teori Antrian \\ dengan R dan QtsPlus \\ (Revisi)}
 \author{Bisma Rohpanca Joyosumarto (2106635581)}
 \institute{Departemen Matematika FMIPA UI \\ Universitas Indonesia}
 \date{
-    Rabu, 13 November 2024
+    November 2024
 
     Riset Operasi
     
@@ -13,12 +13,22 @@
 }
 
 % === bismastyle.sty ===
+%\usetheme{Copenhagen}
+
 \AtBeginSection[]
 {
-  \begin{frame}{Daftar isi}
+  \begin{frame}{Daftar isi keseluruhan}
     \tableofcontents[currentsection]
   \end{frame}
 }
+
+\AtBeginSubsection[]{
+  \frame<beamer>{ 
+    \frametitle{Daftar isi di bab}   
+
+\tableofcontents[currentsection,currentsubsection,sectionstyle=show/hide,subsectionstyle=show/shaded/hide,subsubsectionstyle=show/show/shaded/shaded]}
+}
+% sumber: https://tex.stackexchange.com/questions/434088/beamer-toc-on-each-subsection
 
 \addtobeamertemplate{navigation symbols}{}{%
     \usebeamerfont{footline}%
@@ -41,7 +51,7 @@
 
 \frame{\titlepage}
 
-\begin{frame}{Table of Contents}
+\begin{frame}{Daftar isi keseluruhan}
     \tableofcontents
 \end{frame}
 
@@ -53,13 +63,13 @@
         \item Apabila ada beberapa pelayan, tiap baris/pelayan disebut \textit{server}, sehingga secara keseluruhan, terdapat satu antrian dengan sejumlah \textit{server}
         \item Pada dasarnya, proses mengantri bisa dimodel dengan melihat dua aspek: proses datangnya orang, dan proses perginya orang
         \item Di kuliah Pengantar Sains Data (Metode Statistika), kita sudah kenal \textbf{distribusi Poisson} yang memodelkan probabilitas banyaknya kemunculan dalam suatu satuan waktu, dalam yang namanya \textbf{proses Poisson}
-        \item Baik datangnya orang maupun perginya orang, masing-masing bisa dimodelkan sebagai proses Poisson
+        \item Baik datangnya orang maupun perginya orang, masing-masing bisa dimodelkan sebagai proses Poisson: datangnya orang sama saja kemunculan di pintu masuk, dan perginya orang sama saja kemunculan di pintu keluar
     \end{itemize}
 \end{frame}
 
 \begin{frame}{\textit{Overview:} Proses Poisson dan Rantai Markov}
     \begin{itemize}
-        \item Sifat utama proses Poisson adalah \textbf{sifat Markov} atau \textbf{sifat \textit{memoryless:}} probabilitas kedatangan \textbf{tidak tergantung kapan datangnya}
+        \item Sifat utama proses Poisson adalah \textbf{sifat Markov} atau \textbf{sifat \textit{memoryless:}} probabilitas kedatangan \textbf{hanya bergantung pada kondisi saat itu}, tidak pada kondisi di masa lalu
         \item Proses Poisson adalah contoh \textbf{rantai Markov waktu kontinu} atau \textbf{\textit{continuous-time Markov chain} (CTMC)}
         \item CTMC itu sendiri adalah perumuman dari \textbf{rantai Markov waktu diskrit} atau \textbf{\textit{discrete-time Markov chain} (DTMC)}
         \item Agar lebih paham dasar statistik untuk teori antrian, termasuk mengapa distribusi Poisson dan distribusi eksponensial sering digunakan, mari kita bahas dari awal!
@@ -107,7 +117,7 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Contoh DTMC: \textit{A Shoeshine Shop}}
+\begin{frame}{Contoh DTMC stasioner: \textit{A Shoeshine Shop}}
     Misalkan ada usaha kecil oles sepatu. Hanya ada satu pelayan dan dua kursi pelanggan.
     \begin{itemize}
         \item Apabila kedua kursi kosong, orang cenderung tidak sadar bahwa itu adalah tempat oles sepatu, sehingga tidak datang.
@@ -149,20 +159,6 @@
     \textit{Fun fact:} rantai Markov adalah versi probabilistik dari automata hingga.
 \end{frame}
 
-\begin{frame}[fragile]{Simulasi dan Analisis DTMC di R}
-    Gunakan \textit{package} markovchain
-
-\begin{minted}{r}
-print(0.1 + 0.2)
-?dexp
-dexp(2, lambda = 3)
-\end{minted}
-\end{frame}
-
-\begin{frame}{Iklan: Kuliah Model Stokastik 1}
-    tes
-\end{frame}
-
 \begin{frame}{Perbandingan: Diagram Transisi untuk Antrian}
     %Sedikit demi sedikit, kita coba lebih memahami teori antrian.
     Sebagai perbandingan dengan konsep antrian, perhatikan gambar berikut!
@@ -175,33 +171,289 @@ dexp(2, lambda = 3)
         \item Probabilitas \( P_{i,i+1} \), yaitu ketika banyaknya orang bertambah satu dari \( i \) (menjadi \( i+1 \) orang), ditulis \( \lambda_i \)
         \item Probabilitas \( P_{i,i-1} \), yaitu ketika banyaknya orang berkurang satu dari \( i \) (menjadi \( i-1 \) orang), ditulis \( \mu_i \)
     \end{itemize}
-    Notasi huruf \( \lambda \) tidak sembarangan dipilih...
+    Kita akan lihat nanti, notasi huruf \( \lambda \) tidak sembarangan dipilih.
+\end{frame}
+
+% Simulasi dan Analisis DTMC di R
+\begin{frame}[fragile]{DTMC di R dengan \textit{package} markovchain}
+    DTMC tergolong model stokastik (juga disebut proses stokastik) karena sifatnya yang probabilistik, sehingga menjadi pembahasan di ranah statistika (hingga menjadi kuliah Model Stokastik 1). Oleh karena itu, model stokastik seperti DTMC bisa disimulasikan di bahasa pemrograman R yang biasa digunakan oleh statistikawan. 
+    
+    Untuk DTMC, kita bisa gunakan \textit{package} markovchain:
+
+\begin{minted}{r}
+# install kalau belum
+#install.packages("markovchain")
+
+library("markovchain")
+\end{minted}
+
+    (Nanti akan ada \textit{package} khusus untuk simulasi antrian.)
+\end{frame}
+
+\begin{frame}[fragile]{Contoh DTMC di R}
+    Kita bisa susun TPM dari contoh DTMC yang telah dibahas, sebagai berikut:
+
+\begin{minted}{r}
+mc1_P <- matrix(
+  c(0.5,  0.25, 0.25, 0,
+    0.25, 0.25, 0,    0.5,
+    0.25, 0,    0.25, 0.5,
+    0,    0.4,  0.4,  0.2),
+  nrow = 4,
+  byrow = TRUE
+)
+\end{minted}
+
+Karena opsi \verb|byrow = TRUE|, matriks yang terbentuk akan seperti tertulis. Perhatikan bahwa dipasang \verb|nrow = 4| agar R tidak salah membaca data yang diberikan, yaitu agar matriks memiliki 4 (empat) baris.
+\end{frame}
+
+\begin{frame}[fragile]{Contoh DTMC di R}
+    Setelah menyusun TPM, kita bisa mendefinisikan isi himpunan \(S\),
+
+\begin{minted}{r}
+mc1_states <- c("0", "1", "2", "3")
+\end{minted}
+    kemudian membuat objek \verb|markovchain| atau DTMC seperti berikut:
+
+\begin{minted}{r}
+mc1_obj <- new("markovchain",
+               states = mc1_states,
+               transitionMatrix = mc1_P)    
+\end{minted}
+
+    Informasi \textit{states} dan TPM bisa diperoleh kembali dengan mengetik nama objeknya:
+
+\begin{minted}{r}
+mc1_obj
+\end{minted}
+
+    Untuk memperoleh informasi \textit{states} saja, bisa digunakan fungsi \verb|states|
+
+\begin{minted}{r}
+states(mc1_obj)
+\end{minted}
+
+    Selain itu, diagram transisi juga bisa ditampilkan (lihat \textit{slide} berikutnya) dengan fungsi \verb|plot| seperti berikut.
+
+\begin{minted}{r}
+plot(mc1_obj)
+\end{minted}
+\end{frame}
+
+\begin{frame}{Plot Diagram Transisi di R}
+    \includegraphics[scale=0.9]{gambar/contoh_dtmc_plot.png}
+\end{frame}
+
+\begin{frame}[fragile]{Simulasi DTMC di R}
+    Untuk melakukan simulasi, tentukan waktu berjalannya simulasi,
+
+\begin{minted}{r}
+mc1_t <- 10    
+\end{minted}
+
+    kemudian lakukan \verb|set.seed| dengan bilangan bulat apapun, untuk keperluan \textit{reproducibility} (agar hasil selalu sama walaupun \textit{random}), misalnya 123:
+
+\begin{minted}{r}
+set.seed(123)
+\end{minted}
+
+    Barulah lakukan simulasi dengan fungsi \verb|rmarkovchain|, misalnya dengan \textit{state} awal "0"
+
+\begin{minted}{r}
+mc1_sim <- rmarkovchain(n = mc1_t, object = mc1_obj,
+                        t0 = "0")
+\end{minted}
+
+Untuk \textit{random seed} yang dipilih yaitu 123, hasil simulasi yang tersimpan di \verb|mc1_sim| adalah 10 \textit{state} berikut, secara berturut-turut:
+
+\verb|"0" "2" "3" "3" "3" "1" "0" "2" "0" "0"|
+
+\end{frame}
+
+\begin{frame}[fragile]{Plot Hasil Simulasi di R}
+    Dengan sedikit kode, kita dapat membuat \textit{plot} hasil simulasi tersebut (ditampilkan di \textit{slide} selanjutnya).
+
+\begin{minted}{r}
+mc1_sim_factors <- factor(mc1_sim, levels = mc1_states)
+mc1_sim_int <- as.integer(mc1_sim_factors)
+mc1_sim_times <- 1 : mc1_t
+plot(x = mc1_sim_times,
+     y = mc1_sim_int,
+     xlab = "Waktu (diskrit)",
+     ylab = "State",
+     main = "Simulasi DTMC",
+     xaxt = "n", yaxt = "n")
+axis(1, at = mc1_sim_times)
+axis(2, at = 1 : length(mc1_states),
+        labels = mc1_states)
+\end{minted}
+\end{frame}
+
+\begin{frame}{Plot Hasil Simulasi di R}
+    \includegraphics[scale=0.45]{gambar/contoh_dtmc_simulasi.png}
+\end{frame}
+
+\begin{frame}[fragile]{Probabilitas Jangka Panjang DTMC di R}
+    Walaupun berupa proses \textit{random}, model stokastik memiliki konsep "probabilitas jangka panjang" \textit{(long-run probability)}, yaitu hitungan probabilitas secara umum berada di \textit{state} tertentu. Untuk itu, distribusi stasioner \textit{(stationary distribution)}, juga disebut \textit{steady state probabilities}, bisa dihitung.
+
+    Di R, untuk DTMC, kita bisa memperoleh \textit{steady state probabilities} dengan
+
+\begin{minted}{r}
+steadyStates(mc1_obj)
+\end{minted}
+
+    Untuk contoh DTMC yang dibahas, hasilnya adalah
+
+\begin{verbatim}
+0         1         2         3
+0.2352941 0.2352941 0.2352941 0.2941176
+\end{verbatim}
+    yang bisa ditulis \(p_n\) untuk \textit{steady state probability} untuk \textit{state} \(n\).
+    \begin{align*}
+        p_0 &\approx 0.2352941, & p_2 &\approx 0.2352941, \\
+        p_1 &\approx 0.2352941, & p_3 &\approx 0.2941176
+    \end{align*}
+    \textbf{Catatan:} hasil bisa tergantung \textit{state} awal.
+\end{frame}
+
+\begin{frame}[fragile]{Analisis DTMC di R}
+    Selain \textit{steady state probabilities}, beberapa hasil lainnya tentang DTMC juga bisa diperoleh di R, dengan fungsi \verb|summary|
+
+\begin{minted}{r}
+summary(mc1_obj)    
+\end{minted}
+
+    Hasilnya mengandung beberapa unsur DTMC yang tidak akan kita bahas di sini:
+
+\begin{verbatim}
+Unnamed Markov chain  Markov chain that is composed by: 
+Closed classes: 
+0 1 2 3 
+Recurrent classes: 
+{0,1,2,3}
+Transient classes: 
+NONE 
+The Markov chain is irreducible 
+The absorbing states are: NONE
+\end{verbatim}
+\end{frame}
+
+\begin{frame}{Iklan: Kuliah Model Stokastik 1}
+Di sini, kita membahas DTMC hanya sebagai pengantar untuk konsep-konsep model stokastik lainnya yang pada akhirnya berujung ke teori antrian, seperti diagram transisi. Apabila tertarik untuk mempelajari lebih lanjut, seperti tentang
+\begin{itemize}
+    \item pemodelan untuk berbagai persoalan menggunakan DTMC hingga penyelesaiannya,
+    \item jenis-jenis \textit{state} seperti \textit{recurrent state}, \textit{transient state}, dan \textit{absorbing state}, serta
+    \item sifat-sifat rantai Markov, seperti \textit{irreducible} dan periodik,
+\end{itemize}
+itu semua dipelajari di kuliah Model Stokastik 1 (3 SKS) yang bisa diambil semester depan (\textit{request} saja), saat ini merupakan mata kuliah wajib di semester genap (tepatnya semester 4) untuk program studi S1 Statistika dan program studi S1 Ilmu Aktuaria.
+
+Sementara ini, kita akan lanjut membahas beberapa model stokastik lainnya, seperti proses Poisson.
 \end{frame}
 
 \subsection{Proses Poisson}
 
 \begin{frame}{Distribusi Poisson}
     \begin{itemize}
+        \item Proses Poisson didasari oleh distribusi Poisson, yang akan kita bahas terlebih dahulu
         \item Distribusi Poisson adalah distribusi diskrit yang memodelkan probabilitas untuk banyaknya kemunculan dalam suatu satuan waktu
-        \item Hanya memliki satu parameter: rata-rata kemunculan per satuan waktu, biasa disebut \( \lambda \)
-        \item Contoh: \( \text{Pois}(3) \), yaitu distribusi Poisson dengan rata-rata \( \lambda = 3 \)
+        \item Hanya memliki satu parameter: rata-rata kemunculan per satuan waktu, biasa disebut \textit{rate} dan ditulis \( \lambda \), dengan syarat \( \lambda > 0 \)
+        \item Contoh: \( \text{Pois}(3) \), yaitu distribusi Poisson dengan \textit{rate} \( \lambda = 3 \)
 
-        \includegraphics[scale=0.5]{gambar/dist_pois_lambda3.png}
+        \includegraphics[scale=0.45]{gambar/dist_pois_lambda3.png}
     \end{itemize}
 \end{frame}
 
 \begin{frame}{PMF untuk Distribusi Poisson}
     %\includegraphics[scale=0.4]{gambar/dist_pois_lambda3.png}
 
-    Gambar di atas adalah contoh gambar PMF \textit{(probability mass function)} dari distribusi Poisson, yaitu nilai probabilitas untuk tepat \(x\) kemunculan dalam satu satuan waktu:
-    \[ \text{Pr}(X=x) = \frac{e^{-\lambda} \lambda^x}{x!} \]
-    Contohnya, nilai PMF di \(x=2\) untuk \(\lambda = 3\) orang/menit adalah
+    Misalkan variabel acak \(X\) berdistribusi Poisson dengan \textit{rate} \(\lambda\), atau biasa ditulis
+    \[ X \sim \text{Pois}(\lambda) \]
+    Gambar di atas adalah contoh gambar PMF \textit{(probability mass function)} dari distribusi Poisson, yaitu nilai probabilitas untuk tepat \(k\) kemunculan dalam satu satuan waktu:
+    \[ \text{Pr}(X=k) = \frac{e^{-\lambda} \lambda^k}{k!} \]
+    Contohnya, nilai PMF di \(k=2\) untuk \(\lambda = 3\) orang/menit adalah
     \[ \text{Pr}(X=2) = \frac{e^{-3} 3^2}{2!} \approx 0.2240418 \]
     yaitu probabilitas datangnya \textbf{tepat dua} orang dalam satu menit, jika rata-rata kedatangan adalah \(\lambda = 3\) orang/menit.
 \end{frame}
 
 \begin{frame}{CDF untuk Distribusi Poisson}
-    
+    Sebagaimana distribusi diskrit pada umumnya, CDF \textit{(cumulative distribution function)} untuk distribusi Poisson adalah sumasi PMF hingga nilai \(k\) yang ditentukan, ditulis \(\text{Pr}(X \le k)\)
+    \[ \text{Pr}(X \le k) = \sum_{j=0}^{k} \text{Pr}(X = j) = \sum_{j=0}^{k} \frac{e^{-\lambda} \lambda^j}{j!} = \frac{e^{-\lambda} \lambda^0}{0!} + \dots + \frac{e^{-\lambda} \lambda^k}{k!} \]
+    Interpretasinya di sini adalah probabilitas kemunculan \textbf{paling banyak} \(k\) dalam suatu satuan waktu.
+
+    Contohnya, nilai CDF di \(k = 2\) untuk \( \lambda = 3 \) orang/menit adalah
+    \begin{align*}
+        \text{Pr}(X \le 2) &= \sum_{j=0}^{2} \frac{e^{-3} 3^j}{j!} = \frac{e^{-3} 3^0}{0!} + \frac{e^{-3} 3^1}{1!} + \frac{e^{-3} 3^2}{2!} \\
+        &\approx 0.04978707 + 0.1493612 + 0.2240418 \\
+        &\approx 0.4231901
+    \end{align*}
+    yaitu probabilitas datangnya \textbf{paling banyak dua} orang dalam satu menit, jika rata-rata kedatangan adalah \(\lambda = 3\) orang/menit.
+\end{frame}
+
+\begin{frame}[fragile]{PDF dan CDF Poisson di R}
+    Untuk distribusi Poisson, R menyediakan fungsi \verb|dpois| untuk PMF dan \verb|ppois| untuk CDF. Misalnya, kita bisa menghitung \( \text{Pr}(X=2) \) dengan
+\begin{minted}{r}
+dpois(2, lambda = 3)
+\end{minted}
+    Hasil: \verb|0.2240418|
+
+    Kita bisa menghitung \( \text{Pr}(X \le 2) \) dengan
+\begin{minted}{r}
+ppois(2, lambda = 3)
+\end{minted}
+    Hasil: \verb|0.4231901|
+
+    atau bisa juga secara "manual" sebagai sumasi PMF, dan diperoleh hasil yang sama:
+\begin{minted}{r}
+dpois(0, lambda = 3) +
+  dpois(1, lambda = 3) +
+  dpois(2, lambda = 3)
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Plot Distribusi Poisson di R}
+    Plot PMF \(\text{Pois}(3)\) di beberapa \textit{slide} sebelumnya diperoleh dengan kode R berikut. Intinya, kita memang menghitung nilai PMF Poisson di \(0, \dots, 10\), kemudian menampilkannya.
+
+\begin{minted}[fontsize=\small]{r}
+par_lambda <- 3
+x_pois <- 0 : 10
+p_pois <- dpois(x_pois, lambda = par_lambda)
+plot(x_pois, p_pois,
+     main = "Distribusi Poisson dengan lambda = 3",
+     xlab = "Banyaknya kemunculan dalam satu satuan waktu",
+     ylab = "Probabilitas")
+\end{minted}
+
+    \includegraphics[scale=0.4]{gambar/dist_pois_lambda3.png}
+\end{frame}
+
+\begin{frame}{Sifat-Sifat Distribusi Poisson}
+    Untuk variabel acak \(X \sim \text{Pois}(\mu)\), berlaku
+    \begin{itemize}
+        \item \(E\brackets{X} = \mu\), yaitu ekspektasi atau rata-rata untuk \(X\) adalah \(\mu\)
+        \item \(\text{Var}\brackets{X} = \mu\), yaitu variansi untuk \(X\) juga \(\mu\)
+    \end{itemize}
+    sehingga \(E\brackets{X} = \text{Var}\brackets{X} = \mu\).
+
+    Oleh karena itu, distribusi Poisson \(\text{Pois}(\lambda)\) terkadang disebut "memiliki parameter \(\lambda\)", "memiliki \textit{rate} \(\lambda\)", atau "memiliki rata-rata \(\lambda\)", artinya sama.
+
+    Selain itu, hasil jumlah dua variabel acak independen yang berdistribusi Poisson juga berdistribusi Poisson dengan \textit{rate} berupa hasil jumlah dari kedua \textit{rate}, atau bisa ditulis
+    \[\text{Pois}(\mu) + \text{Pois}(v) \sim \text{Pois}(\mu + v)\]
+
+    Penggunaan distribusi Poisson untuk memodelkan kemunculan dirumuskan sebagai model stokastik bernama proses Poisson, dibahas setelah ini.
+\end{frame}
+
+\begin{frame}{Proses Poisson}
+    Proses Poisson dengan \textit{rate} \(\lambda > 0\) adalah model stokastik bernilai bulat, misalnya dinotasikan \( \braces{X(t); \, t \ge 0} \) dengan \(X(t)\) melambangkan banyaknya kemunculan dari waktu nol sampai \(t\), yang memenuhi
+    \begin{itemize}
+        \item \(X(0) = 0\), yaitu belum ada kemunculan di waktu \(t=0\);
+        \item \textit{independent increments}, yaitu variabel-variabel acak berikut (berupa selisih kemunculan, yaitu banyaknya kemunculan dalam interval waktu)
+        \[ X(t_b) - X(t_a), \quad 0 < t_a < t_b \]
+        semuanya saling independen; dan
+        \item Untuk titik waktu \(s \ge 0\) dan durasi \(t > 0\), berlaku
+        \[X(s+t) - X(s) \sim \text{Pois}(\lambda t)\]
+        yaitu banyaknya kemunculan dalam interval waktu \(\brackets{s,s+t}\) berdistribusi \(\text{Pois}(\lambda t)\)
+    \end{itemize}
+    Ternyata, \(E\brackets{X(t)} = \text{Var}\brackets{X(t)} = \lambda t\)
 \end{frame}
 
 \subsection{Rantai Markov Waktu Kontinu (CTMC)}
@@ -220,9 +472,9 @@ dexp(2, lambda = 3)
 
 \subsection{M/M/c di QtsPlus}
 
-\section{Lampiran: Tautan dan \textit{GitHub repository}}
+\section{Lampiran: Tautan, \textit{GitHub repository}, Referensi}
 
-\begin{frame}{Lampiran: Tautan dan \textit{GitHub repository}}
+\begin{frame}{Tautan dan \textit{GitHub repository}}
     Untuk \textit{package} R yang digunakan:
     \begin{itemize}
         \item markovchain: \url{https://github.com/spedygiorgio/markovchain}
@@ -238,6 +490,20 @@ dexp(2, lambda = 3)
         \item QtsPlus v4.0: \url{https://mason.gmu.edu/~jshortle/fqt5th.html}
         
         \item \textit{GitHub repository} untuk presentasi ini (termasuk kode): \url{https://github.com/BismaBRJ/intro_stokastik_antrian_r_2024/}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Referensi}
+    \begin{itemize}
+        \item Pinsky, Mark A. \& Karlin, Samuel (2011). \textit{An Introduction to Stochastic Modeling} (edisi ke-2). Elsevier.
+        
+        \textbf{Untuk:} sebagian besar materi DTMC, proses Poisson, dan CTMC, kecuali contoh dan simulasi dengan R
+
+        \item Shortle, John F.; Thompson, James M.; Gross, Donald; \& Harris, Carl M. (2018). \textit{Fundamentals of Queueing Theory} (edisi ke-5). Wiley. \url{https://mason.gmu.edu/~jshortle/fqt5th.html}
+        
+        \textbf{Untuk:} sebagian besar materi \textit{birth-death process} dan antrian, termasuk M/M/c, kecuali contoh dan simulasi dengan R
+
+        \textbf{Catatan:} sering disebut buku \textbf{Gross \& Harris} karena merekalah yang menulis edisi pertama
     \end{itemize}
 \end{frame}
 

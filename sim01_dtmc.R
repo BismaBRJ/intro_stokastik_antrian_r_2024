@@ -1,6 +1,8 @@
 # === Simulasi dan Analisis DTMC dengan markovchain ===
 
+# install kalau belum
 #install.packages("markovchain")
+
 library("markovchain")
 
 ?matrix
@@ -10,8 +12,8 @@ mc1_P <- matrix(
     0.25, 0.25, 0,    0.5,
     0.25, 0,    0.25, 0.5,
     0,    0.4,  0.4,  0.2),
-  nrow=4,
-  byrow=TRUE
+  nrow = 4,
+  byrow = TRUE
 )
 mc1_P
 

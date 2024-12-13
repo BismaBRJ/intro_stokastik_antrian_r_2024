@@ -2,7 +2,9 @@
 
 # === Simulasi dan Analisis DTMC dengan markovchain ===
 
+# install kalau belum
 #install.packages("markovchain")
+
 library("markovchain")
 
 ?matrix
@@ -12,8 +14,8 @@ mc1_P <- matrix(
     0.25, 0.25, 0,    0.5,
     0.25, 0,    0.25, 0.5,
     0,    0.4,  0.4,  0.2),
-  nrow=4,
-  byrow=TRUE
+  nrow = 4,
+  byrow = TRUE
 )
 mc1_P
 
@@ -60,6 +62,46 @@ summary(mc1_obj)
 
 # steady-state distribution (probabilitas jangka panjang)
 steadyStates(mc1_obj)
+
+## === Distribusi Poisson ===
+
+par_lambda <- 3
+x_pois <- 0 : 10
+p_pois <- dpois(x_pois, lambda = par_lambda)
+plot(x_pois, p_pois,
+     main = "Distribusi Poisson dengan lambda = 3",
+     xlab = "Banyaknya kemunculan dalam satu satuan waktu",
+     ylab = "Probabilitas")
+
+dpois(2, lambda = par_lambda)
+
+ppois(2, lambda = par_lambda)
+
+dpois(0, lambda = par_lambda) +
+  dpois(1, lambda = par_lambda) +
+  dpois(2, lambda = par_lambda)
+
+## === Simulasi Proses Poisson ===
+
+pp_lambda <- 2
+
+pp_n <- 10
+set.seed(2024)
+# bilangan random sebanyak pp_n dari distribusi Exp(pp_lambda):
+pp_interarrival <- rexp(pp_n, rate = pp_lambda)
+pp_interarrival
+# jumlahan kumulatif
+pp_arrival <- cumsum(pp_interarrival)
+
+pp_arrival
+
+?plot
+plot(x = pp_arrival,
+     y = 1 : length(pp_arrival),
+     type = "s",
+     xlab = "Waktu",
+     ylab = "Kedatangan",
+     main = "Simulasi Proses Poisson dengan lambda = 2")
 
 ## === Simulasi CTMC dengan markovchain ===
 
@@ -115,28 +157,6 @@ states(mc2_obj)
 
 # steady-state distribution (probabilitas jangka panjang)
 steadyStates(mc2_obj)
-
-## === Simulasi Proses Poisson ===
-
-pp_lambda <- 2
-
-pp_n <- 10
-set.seed(2024)
-# bilangan random sebanyak pp_n dari distribusi Exp(pp_lambda):
-pp_interarrival <- rexp(pp_n, rate = pp_lambda)
-pp_interarrival
-# jumlahan kumulatif
-pp_arrival <- cumsum(pp_interarrival)
-
-pp_arrival
-
-?plot
-plot(x = pp_arrival,
-     y = 1 : length(pp_arrival),
-     type = "s",
-     xlab = "Waktu",
-     ylab = "Kedatangan",
-     main = "Simulasi Proses Poisson dengan lambda = 2")
 
 ## === Simulasi Birth-Death Process dengan markovchain ===
 
