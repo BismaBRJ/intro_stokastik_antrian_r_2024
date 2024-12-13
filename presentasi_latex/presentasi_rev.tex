@@ -270,7 +270,7 @@ Untuk \textit{random seed} yang dipilih yaitu 123, hasil simulasi yang tersimpan
 
 \end{frame}
 
-\begin{frame}[fragile]{Plot Hasil Simulasi di R}
+\begin{frame}[fragile]{Plot Hasil Simulasi DTMC di R}
     Dengan sedikit kode, kita dapat membuat \textit{plot} hasil simulasi tersebut (ditampilkan di \textit{slide} selanjutnya).
 
 \begin{minted}{r}
@@ -289,7 +289,7 @@ axis(2, at = 1 : length(mc1_states),
 \end{minted}
 \end{frame}
 
-\begin{frame}{Plot Hasil Simulasi di R}
+\begin{frame}{Plot Hasil Simulasi DTMC di R}
     \includegraphics[scale=0.45]{gambar/contoh_dtmc_simulasi.png}
 \end{frame}
 
@@ -442,18 +442,44 @@ plot(x_pois, p_pois,
     Penggunaan distribusi Poisson untuk memodelkan kemunculan dirumuskan sebagai model stokastik bernama proses Poisson, dibahas setelah ini.
 \end{frame}
 
-\begin{frame}{Proses Poisson}
+\begin{frame}{Definisi Proses Poisson}
     Proses Poisson dengan \textit{rate} \(\lambda > 0\) adalah model stokastik bernilai bulat, misalnya dinotasikan \( \braces{X(t); \, t \ge 0} \) dengan \(X(t)\) melambangkan banyaknya kemunculan dari waktu nol sampai \(t\), yang memenuhi
     \begin{itemize}
         \item \(X(0) = 0\), yaitu belum ada kemunculan di waktu \(t=0\);
-        \item \textit{independent increments}, yaitu variabel-variabel acak berikut (berupa selisih kemunculan, yaitu banyaknya kemunculan dalam interval waktu)
+        \item \textit{independent increments}, yaitu variabel-variabel acak berikut (masing-masing berupa selisih kemunculan, yaitu banyaknya kemunculan dalam interval waktu)
         \[ X(t_b) - X(t_a), \quad 0 < t_a < t_b \]
         semuanya saling independen; dan
-        \item Untuk titik waktu \(s \ge 0\) dan durasi \(t > 0\), berlaku
+        \item untuk tiap titik waktu \(s \ge 0\) dan durasi \(t > 0\), berlaku
         \[X(s+t) - X(s) \sim \text{Pois}(\lambda t)\]
         yaitu banyaknya kemunculan dalam interval waktu \(\brackets{s,s+t}\) berdistribusi \(\text{Pois}(\lambda t)\)
     \end{itemize}
-    Ternyata, \(E\brackets{X(t)} = \text{Var}\brackets{X(t)} = \lambda t\)
+\end{frame}
+
+\begin{frame}{Sifat-Sifat Proses Poisson}
+    Jelas bahwa \(E\brackets{X(t)} = \text{Var}\brackets{X(t)} = \lambda t\) karena
+    \[X(t) = X(0+t) - X(0) \sim \text{Pois}(\lambda t)\]
+    Selain itu, untuk tiap titik waktu \(s \ge 0\) dan durasi \(t > 0\), berlaku
+    \[\text{Pr}\brackets{X(s+t) - X(s) = k} = \frac{e^{-\lambda t}\pars{\lambda t}^k}{k!}\]
+    sesuai rumus PMF Poisson, tepatnya \(\text{Pois}(\lambda t)\). Maka,
+    \[\text{Pr}\brackets{X(t) = k} = \text{Pr}\brackets{X(0+t) - X(0) = k} = \frac{e^{-\lambda t}\pars{\lambda t}^k}{k!}\]
+    sehingga bisa disimpulkan
+    \[\text{Pr}\brackets{X(s+t) - X(s) = k} = \text{Pr}\brackets{X(t) = k} = \frac{e^{-\lambda t}\pars{\lambda t}^k}{k!}\]
+\end{frame}
+
+\begin{frame}{\textit{Interarrival times} dan \textit{waiting/arrival times}}
+    tes
+\end{frame}
+
+\begin{frame}{\textit{Interarrival times} berdistribusi eksponensial}
+    tes
+\end{frame}
+
+\begin{frame}{Distribusi Eksponensial}
+    tes
+\end{frame}
+
+\begin{frame}{Contoh Proses Poisson: Kedatangan Pelanggan}
+    Kedatangan pelanggan di toko tertentu mengikuti proses Poisson dengan \textit{rate} \(\lambda = 4\) orang/jam. 
 \end{frame}
 
 \subsection{Rantai Markov Waktu Kontinu (CTMC)}
