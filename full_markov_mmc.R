@@ -65,14 +65,6 @@ steadyStates(mc1_obj)
 
 ## === Distribusi Poisson ===
 
-par_lambda <- 3
-x_pois <- 0 : 10
-p_pois <- dpois(x_pois, lambda = par_lambda)
-plot(x_pois, p_pois,
-     main = "Distribusi Poisson dengan lambda = 3",
-     xlab = "Banyaknya kemunculan dalam satu satuan waktu",
-     ylab = "Probabilitas")
-
 dpois(2, lambda = par_lambda)
 
 ppois(2, lambda = par_lambda)
@@ -81,9 +73,17 @@ dpois(0, lambda = par_lambda) +
   dpois(1, lambda = par_lambda) +
   dpois(2, lambda = par_lambda)
 
+par_lambda <- 3
+x_pois <- 0 : 10
+p_pois <- dpois(x_pois, lambda = par_lambda)
+plot(x_pois, p_pois,
+     main = "Distribusi Poisson dengan lambda = 3",
+     xlab = "Banyaknya kemunculan dalam satu satuan waktu",
+     ylab = "Probabilitas")
+
 ## === Simulasi Proses Poisson ===
 
-pp_lambda <- 2
+pp_lambda <- 4
 
 pp_n <- 10
 set.seed(2024)
@@ -96,12 +96,12 @@ pp_arrival <- cumsum(pp_interarrival)
 pp_arrival
 
 ?plot
-plot(x = pp_arrival,
-     y = 1 : length(pp_arrival),
+plot(x = c(0, pp_arrival),
+     y = 0 : length(pp_arrival),
      type = "s",
      xlab = "Waktu",
      ylab = "Kedatangan",
-     main = "Simulasi Proses Poisson dengan lambda = 2")
+     main = "Simulasi Proses Poisson dengan lambda = 4")
 
 ## === Simulasi CTMC dengan markovchain ===
 

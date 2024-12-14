@@ -43,6 +43,7 @@
 
 \usepackage{hyperref}
 \usepackage{graphicx}
+\usepackage{amsmath}
 
 \usepackage{minted}
 % === akhir bismastyle.sty ===
@@ -347,7 +348,7 @@ Di sini, kita membahas DTMC hanya sebagai pengantar untuk konsep-konsep model st
 \end{itemize}
 itu semua dipelajari di kuliah Model Stokastik 1 (3 SKS) yang bisa diambil semester depan (\textit{request} saja), saat ini merupakan mata kuliah wajib di semester genap (tepatnya semester 4) untuk program studi S1 Statistika dan program studi S1 Ilmu Aktuaria.
 
-Sementara ini, kita akan lanjut membahas beberapa model stokastik lainnya, seperti proses Poisson.
+Sementara ini, kita akan lanjut membahas model stokastik yang lebih berkaitan dengan teori antrian, seperti proses Poisson.
 \end{frame}
 
 \subsection{Proses Poisson}
@@ -429,15 +430,16 @@ plot(x_pois, p_pois,
 \begin{frame}{Sifat-Sifat Distribusi Poisson}
     Untuk variabel acak \(X \sim \text{Pois}(\mu)\), berlaku
     \begin{itemize}
-        \item \(E\brackets{X} = \mu\), yaitu ekspektasi atau rata-rata untuk \(X\) adalah \(\mu\)
+        \item \(\text{E}\brackets{X} = \mu\), yaitu ekspektasi atau rata-rata untuk \(X\) adalah \(\mu\)
         \item \(\text{Var}\brackets{X} = \mu\), yaitu variansi untuk \(X\) juga \(\mu\)
     \end{itemize}
-    sehingga \(E\brackets{X} = \text{Var}\brackets{X} = \mu\).
+    sehingga \(\text{E}\brackets{X} = \text{Var}\brackets{X} = \mu\).
 
     Oleh karena itu, distribusi Poisson \(\text{Pois}(\lambda)\) terkadang disebut "memiliki parameter \(\lambda\)", "memiliki \textit{rate} \(\lambda\)", atau "memiliki rata-rata \(\lambda\)", artinya sama.
 
     Selain itu, hasil jumlah dua variabel acak independen yang berdistribusi Poisson juga berdistribusi Poisson dengan \textit{rate} berupa hasil jumlah dari kedua \textit{rate}, atau bisa ditulis
     \[\text{Pois}(\mu) + \text{Pois}(v) \sim \text{Pois}(\mu + v)\]
+    %selama \(\text{Pois}(\mu)\) dan \(\text{Pois}(v)\) independen, karena
 
     Penggunaan distribusi Poisson untuk memodelkan kemunculan dirumuskan sebagai model stokastik bernama proses Poisson, dibahas setelah ini.
 \end{frame}
@@ -447,7 +449,7 @@ plot(x_pois, p_pois,
     \begin{itemize}
         \item \(X(0) = 0\), yaitu belum ada kemunculan di waktu \(t=0\);
         \item \textit{independent increments}, yaitu variabel-variabel acak berikut (masing-masing berupa selisih kemunculan, yaitu banyaknya kemunculan dalam interval waktu)
-        \[ X(t_b) - X(t_a), \quad 0 < t_a < t_b \]
+        \[ X\pars{t_i} - X\pars{t_{i-1}}, \quad 0 \le t_1 < t_2 < \dots < t_n \]
         semuanya saling independen; dan
         \item untuk tiap titik waktu \(s \ge 0\) dan durasi \(t > 0\), berlaku
         \[X(s+t) - X(s) \sim \text{Pois}(\lambda t)\]
@@ -456,7 +458,7 @@ plot(x_pois, p_pois,
 \end{frame}
 
 \begin{frame}{Sifat-Sifat Proses Poisson}
-    Jelas bahwa \(E\brackets{X(t)} = \text{Var}\brackets{X(t)} = \lambda t\) karena
+    Jelas bahwa \(\text{E}\brackets{X(t)} = \text{Var}\brackets{X(t)} = \lambda t\) karena
     \[X(t) = X(0+t) - X(0) \sim \text{Pois}(\lambda t)\]
     Selain itu, untuk tiap titik waktu \(s \ge 0\) dan durasi \(t > 0\), berlaku
     \[\text{Pr}\brackets{X(s+t) - X(s) = k} = \frac{e^{-\lambda t}\pars{\lambda t}^k}{k!}\]
@@ -466,23 +468,224 @@ plot(x_pois, p_pois,
     \[\text{Pr}\brackets{X(s+t) - X(s) = k} = \text{Pr}\brackets{X(t) = k} = \frac{e^{-\lambda t}\pars{\lambda t}^k}{k!}\]
 \end{frame}
 
-\begin{frame}{\textit{Interarrival times} dan \textit{waiting/arrival times}}
-    tes
+\begin{frame}{\textit{Stationary increments} dalam proses Poisson}
+    Untuk proses Poisson \(\braces{X(t)}\), sudah ditunjukkan bahwa
+    \[\text{Pr}\brackets{X(s+t) - X(s) = k} = \text{Pr}\brackets{X(t) = k}\]
+    Pilih \(b = s+t\) dan \(a = s\) agar \(t = b-s = b-a\), sehingga
+    \[\text{Pr}\brackets{X(b) - X(a) = k} = \text{Pr}\brackets{X\pars{b-a} = k}\]
+    Kedua persamaan di atas adalah sifat yang sama, yang disebut \textit{stationary increments}.
+    %\textbf{Kesamaan probabilitas mengindikasikan kesamaan PMF, yang mengimplikasikan kesamaan distribusi.}
 \end{frame}
 
-\begin{frame}{\textit{Interarrival times} berdistribusi eksponensial}
-    tes
+\begin{frame}{\textit{Interarrival times} dan \textit{waiting/arrival times}}
+    Sejauh ini, kita berurusan dengan banyaknya kemunculan dalam interval waktu.
+    
+    Kita juga bisa membalikkannya, agar berurusan dengan lama waktu antar kemunculan, juga disebut waktu antar kedatangan \textit{(interarrival time)} atau \textit{sojourn time}, biasa dilambangkan \( T_n \) untuk durasi antara kemunculan ke-\((n-1)\) dengan kemunculan ke-\(n\). Karena kemunculan di sini bersifat acak, \textit{interarrival time} \(T_n\) juga berupa variabel acak, dan \(\braces{T_n, \, n=1,2,\dots}\) menjadi barisan variabel acak, disebut barisan \textit{interarrival times}, dimulai dari \(T_1\) sebagai durasi dari awal dimulainya proses Poisson hingga kemunculan pertama. Tiap \(T_i\) saling independen.
+
+    Terkadang, kita ingin berurusan dengan lama waktu dari awal proses hingga kedatangan ke-\(n\), daripada lama waktu antar kedatangan. Untuk itu, variabel acak \textit{waiting time} atau \textit{arrival time} didefinisikan
+    \[W_n = T_1 + T_2 + \dots + T_n\]
+\end{frame}
+
+\begin{frame}{\(T_1\) berdistribusi eksponensial}
+    Bagaimana distribusi dari \(T_n\)? Mari kita tinjau \(T_1\) terlebih dahulu. Kita bisa tinjau CDFnya yaitu \(\text{Pr}(T_1 \le t)\), lalu kita hubungkan dengan kemunculan: kejadian \(\brackets{T_1 \le t} = \brackets{W_1 \le t}\), bahwa kemunculan pertama sudah tercapai, itu sama saja dengan kejadian \(\brackets{X(t) \ne 0}\), yaitu banyaknya kemunculan sudah tidak lagi nol. Maka probabilitas kedua kejadian sama, sehingga
+    \begin{align*}
+        \text{Pr}\pars{T_1 \le t} &= \text{Pr}\brackets{X(t) \ne 0}
+        = 1 - \text{Pr}\brackets{X(t) = 0}
+        = 1 - \frac{e^{-\lambda t}\pars{\lambda t}^0}{0!} \\
+        &= 1 - \frac{e^{-\lambda t}(1)}{1}
+        = 1 - e^{-\lambda t}
+    \end{align*}
+    yaitu CDF distribusi eksponensial (mari kita bahas!), sehingga \(T_1 \sim \text{Exp}(\lambda)\), yaitu variabel acak \(T_1\) berdistribusi eksponensial dengan parameter \(\lambda\) yang juga disebut \textit{rate}.
 \end{frame}
 
 \begin{frame}{Distribusi Eksponensial}
-    tes
+    Distribusi eksponensial adalah suatu distribusi kontinu dengan satu parameter saja, biasa ditulis \(\lambda > 0\) (kebetulan?), dan biasa disebut \textit{rate} (kebetulan?). Apabila dimisalkan
+    \[T \sim \text{Exp}(\lambda)\]
+    yaitu \(T\) berdistribusi eksponensial dengan \textit{rate} \(\lambda\), bisa ditulis fungsi PDF \textit{(probability density function)}
+    \[f_T(t) = \begin{cases}
+        \lambda e^{-\lambda t}, & t \ge 0 \\
+        0, & t < 0
+    \end{cases}\]
+    dan CDF berikut (dihitung sebagai integral dari \(-\infty\) sampai \(t\) dari PDF, sebagaimana distribusi kontinu pada umumnya)
+    \[F_T(t) = \text{Pr}(T \le t) = \begin{cases}
+        1 - e^{-\lambda t}, & t \ge 0 \\
+        0, & t < 0
+    \end{cases}\]
+\end{frame}
+
+\begin{frame}{Sifat-Sifat Distribusi Eksponensial}
+    Untuk variabel acak \(T \sim \text{Exp}(\lambda)\), berlaku
+    \[\text{E}\brackets{T} = \frac{1}{\lambda}, \quad \text{Var}\brackets{T} = \frac{1}{\lambda^2}\]
+    sehingga \(\text{Var}\brackets{T} = \text{E}\brackets{T}^2\).
+
+    Daripada menulis CDF eksponensial yaitu \(\text{Pr}(T \le t) = 1 - e^{-\lambda t}\), lazim ditulis
+    \[\text{Pr}(T > t) = e^{-\lambda t}\]
+
+    %Selain itu, apabila variabel-variabel acak \(T_1, \dots, T_n\) saling independen dan \(T_i \sim \text{Exp}(\lambda_i)\) untuk \(i=1,\dots,n\), maka \[\text{min}\braces{T_1, \dots, T_n} \sim \text{Exp}\pars{\lambda_1 + \dots + \lambda_n}\]
+    Yang terpenting, distribusi eksponensial adalah \textbf{satu-satunya distribusi kontinu yang memenuhi \textit{memoryless property}} sebagai berikut:
+    \[\text{Pr}\pars{T > t+s \; \middle| \; T > s} = \text{Pr}\pars{T > t}\]
+    untuk titik waktu \(s \ge 0\) dan durasi \(t > 0\), karena
+    \begin{align*}
+        \text{Pr}\pars{T > t+s \; \middle| \; T > s} &= \frac{\text{Pr}\pars{T>t+s, T>s}}{\text{Pr}\pars{T>s}} = \frac{\text{Pr}\pars{T>t+s}}{\text{Pr}\pars{T>s}} \\
+        &= \frac{e^{-\lambda \pars{t+s}}}{e^{-\lambda s}} = e^{-\lambda t} = \text{Pr}\pars{T > t}
+    \end{align*}
+\end{frame}
+
+% (cara salah, batal)
+%\begin{frame}{\(T_n\) berdistribusi eksponensial}
+    %Dengan cara yang serupa seperti \(T_1\), mari kita tinjau distribusi \(T_n\). Kejadian \(\brackets{T_n \le t}\), bahwa kemunculan ke-\(n\) sudah tercapai, sama dengan kejadian \(\brackets{X(t) \ge n}\), yaitu banyaknya kemunculan hingga titik waktu \(t\) setidaknya sebanyak \(n\), sehingga
+    %\begin{align*}
+        %\text{Pr}\pars{T_n \le t} &= \text{Pr}\brackets{X(t) \ge n} = 1 - \text{Pr}\brackets{X(t) < n} \\
+        %&= 1 - \sum_{j=0}^{n-1} \text{Pr}\brackets{X(t) = j} = 1 - \sum_{j=0}^{n-1} \frac{e^{-\lambda t}\pars{\lambda t}^j}{j!}
+    %\end{align*}
+    %Mengingat bahwa jumlahan distribusi Poisson yang saling independen juga berdistribusi Poisson dengan \textit{rate} yang dijumlah,
+    %\[\text{Pr}\pars{T_n \le t} = 1 - \sum_{j=0}^{n-1} \frac{e^{-\lambda t}\pars{\lambda t}^j}{j!} = 1 - \frac{e^{-n\lambda t}\pars{n\lambda t}^j}{j!}\]
+%\end{frame}
+% (salah juga)
+%\begin{frame}{\(T_n\) berdistribusi eksponensial}
+    %Sekarang, mari kita tinjau distribusi \(T_n\). Perhatikan bahwa \(T_n = W_n - W_{n-1}\), sehingga berdasarkan \textit{memoryless property} dari distribusi \(T \sim \text{Exp}(\lambda)\),
+    %\begin{align*}
+        %\text{Pr}\brackets{T > W_{n-1} + T_n \; \middle| \; T > T_n} = \text{Pr}\pars{T > W_{n-1}}
+    %\end{align*}
+%\end{frame}
+% (gagal lagi, au ah)
+%\begin{frame}{\(T_n\) berdistribusi eksponensial}
+    %Dengan cara yang mirip seperti \(T_1\), mari kita tinjau distribusi \(T_n\). Namun, daripada meninjau CDF yaitu \(\text{Pr}\pars{T_n \le t}\), kita tinjau \(\text{Pr}\pars{T_n > t}\).
+    %Kejadian \(\brackets{T_n > t}\), bahwa kemunculan ke-\(n\) belum tercapai, sama dengan kejadian \(\brackets{X(t) < n}\), yaitu banyaknya kemunculan hingga titik waktu \(t\) masih kurang dari \(n\). Sehingga, %Perhatikan bahwa \(T_n = W_n - W_{n-1}\).
+    %\begin{align*}
+        %\text{Pr}\pars{T_n \le t} &= \text{Pr}\brackets{X(t) < n} = \text{Pr}\brackets{X\pars{t - W_{n-1} + W_{n-1}} < n}
+    %\end{align*}
+    %Berdasarkan sifat proses Poisson,
+    %\begin{align*}
+        %\text{Pr}\brackets{X\pars{t - W_{n-1} + W_{n-1}} - X\pars{W_{n-1}} < n} = \text{Pr}\brackets{X\pars{t - W_{n-1}} < n}
+    %\end{align*}
+%\end{frame}
+% menggeser meragukan...
+%\begin{frame}{\(T_n\) berdistribusi eksponensial}
+    %Dengan cara yang mirip seperti \(T_1\), mari kita tinjau distribusi \(T_n\). Namun, daripada meninjau CDF yaitu \(\text{Pr}\pars{T_n \le t}\), kita tinjau \(\text{Pr}\pars{T_n > t}\). Kejadian \(\brackets{T_n > t}\), bahwa kemunculan ke-\(n\) belum tercapai, sama dengan kejadian \(\brackets{X(t) < n}\), yaitu banyaknya kemunculan hingga titik waktu \(t\) masih kurang dari \(n\). Sehingga,
+    %\begin{align*}
+        %\text{Pr}\pars{T_n > t} &= \text{Pr}\brackets{X(t) < n} = \text{Pr}\brackets{X(t) - (n-1) < n - (n-1)} \\
+        %&= \text{Pr}\brackets{X(t) - X\pars{W_{n-1}} < 1} = \text{Pr}\brackets{X(t) - X\pars{W_{n-1}} = 0} \\
+        %%&= \text{Pr}\brackets{X\pars{t - W_{n-1} + W_{n-1}} - X\pars{W_{n-1}} = 0} \\
+        %&\text{Berdasarkan sifat \textit{stationary increments},} \\
+        %&= \text{Pr}\brackets{X\pars{t - W_{n-1}} = 0} \\
+        %&\text{"Menggeser" proses Poisson ke kemunculan ke-}(n-1), \\
+        %&= \text{Pr}\brackets{X(t) = 0} = \frac{e^{-\lambda t}\pars{\lambda t}^0}{0!} = e^{-\lambda t}
+    %\end{align*}
+    %Dengan demikian, \(T_n \sim \text{Exp}(\lambda)\).
+%\end{frame}
+% ALL THIS TIME I BEGAN WITH T_n > t AND THOUGHT IT MEANT THE WAITING TIME IS MORE THAN t........ YET SOMEHOW I KNEW, FOR ALL STEPS AFTER THAT, THAT T_n IS INTERARRIVAL... NO WONDER I KEEP GETTING IT WRONG THE WHOLE DAY DAMN IT!
+%\begin{frame}{\(T_n\) berdistribusi eksponensial}
+    %Dengan cara yang mirip seperti \(T_1\), mari kita tinjau distribusi \(T_n\) melalui CDF.
+    %%Namun, daripada meninjau CDF yaitu \(\text{Pr}\pars{T_n \le t}\), kita tinjau \(\text{Pr}\pars{T_n > t}\). Kejadian \(\brackets{T_n > t}\), bahwa kemunculan ke-\(n\) belum tercapai, sama dengan kejadian \(\brackets{X(t) < n}\), yaitu banyaknya kemunculan hingga titik waktu \(t\) masih kurang dari \(n\).
+    %Kejadian \(\brackets{T_n \le t}\), bahwa kemunculan ke-\(n\) sudah tercapai, sama dengan kejadian \(\brackets{X(t) \ge n}\), yaitu banyaknya kemunculan hingga titik waktu \(t\) setidaknya sudah sebanyak \(n\).
+    %%Lebih tepatnya, untuk mempermudah, kita misalkan \(T_{n-1} = s\) sehingga \(0 < s < t\), yaitu 
+    %Dengan demikian, \(T_n \sim \text{Exp}(\lambda)\).
+%\end{frame}
+% let's get it right this time
+\begin{frame}{\(T_n\) berdistribusi eksponensial}
+    Mari kita tinjau distribusi \(T_n\). Karena distribusi \(T_1\) sudah diketahui, kita bisa mencoba pendekatan perbandingan. Kita juga bisa meninjau probabilitas \(\brackets{T_2 > t}\) daripada CDF \(\brackets{T_2 \le t}\).
+    
+    Misalkan \(s > 0\) dan \(t > 0\) adalah dua durasi, misalnya untuk dua kemunculan berturut-turut. Perhatikan bahwa \( (0,s] \) dan \( (s, s+t] \) adalah dua interval yang saling lepas karena \( 0 < s < s+t \), sehingga berdasarkan sifat \textit{independent increments}, variabel acak \(X\pars{s+t} - X\pars{s}\) dan \(X\pars{s} - X\pars{0} = X\pars{s}\) saling bebas; 
+    %Sehingga, apabila kita hitung probabilitas bersyarat seperti berikut, syarat akan hilang:
+    apabila dihitung probabilitas bersyarat seperti berikut, syarat hilang:
+    \begin{align*}
+        \text{Pr}\pars{T_2 > t \; \middle| \; T_1 = s} &= \text{Pr}\brackets{X\pars{s+t} - X\pars{s} = 0 \; \middle| \; X\pars{s} = 1 } \\
+        &= \text{Pr}\brackets{X\pars{s+t} - X\pars{s} = 0} \quad \pars{= \text{Pr}\pars{T_2 > t}} \\
+        &\text{Berdasarkan sifat \textit{stationary increments,}} \\
+        &= \text{Pr}\brackets{X\pars{t} = 0} = \frac{e^{-\lambda t} \pars{\lambda t}^0}{0!} = e^{-\lambda t}
+    \end{align*}
+    sehingga \(T_2 \sim \text{Exp}(\lambda)\). Dengan bukti serupa, \(T_n \sim \text{Exp}(\lambda)\).
+    %Dengan bukti serupa, dapat disimpulkan \(T_n \sim \text{Exp}(\lambda)\) untuk \(n = 1, 2, 3, \dots\)
 \end{frame}
 
 \begin{frame}{Contoh Proses Poisson: Kedatangan Pelanggan}
-    Kedatangan pelanggan di toko tertentu mengikuti proses Poisson dengan \textit{rate} \(\lambda = 4\) orang/jam. 
+    Kedatangan pelanggan di toko tertentu mengikuti proses Poisson dengan \textit{rate} \(\lambda = 4\) orang/jam. Toko buka pukul 09.00 pagi. Tentukan probabilitas bahwa tepat satu pelanggan telah datang ketika sudah pukul 09.30 pagi DAN tepat lima pelanggan telah datang ketika sudah pukul 11.30 siang.
+
+    \textbf{Jawab:} misalkan \(t\) bersatuan jam (agar \(\lambda = 4\) orang/jam), dan dipasang \(t=0\) untuk pukul 09.00. Memanfaatkan \textit{independent increments} antar variabel acak \(X\pars{\frac{5}{2}} - X\pars{\frac{1}{2}}\) dengan \(X\pars{\frac{1}{2}}\),
+    \begin{align*}
+        \text{Pr}&\braces{X\pars{\frac{1}{2}} = 1, \, X\pars{\frac{5}{2}} = 5} \\
+        &= \text{Pr}\braces{X\pars{\frac{1}{2}} = 1, \, X\pars{\frac{5}{2}} - X\pars{\frac{1}{2}} = 5-1} \\
+        &= \text{Pr}\braces{X\pars{\frac{1}{2}} = 1} \text{Pr}\braces{X\pars{2} = 4} \\
+        &= \braces{ \frac{e^{-4(1/2)} \pars{4(1/2)}^1}{1!} }\braces{ \frac{e^{-4(2)} \pars{4(2)}^4}{4!} }
+        %= \pars{2e^{-2}} \pars{\frac{512}{3}e^{-8}}
+        \approx 0.0154965
+    \end{align*}
+\end{frame}
+
+\begin{frame}{Simulasi Proses Poisson}
+    Simulasi proses Poisson bisa dilakukan dengan langkah-langkah berikut.
+    \begin{enumerate}
+        \item Tetapkan \textit{rate} \(\lambda\) dan banyaknya kemunculan \(n\) yang ingin disimulasikan, lalu hasilkan barisan \textit{interarrival times} \(\braces{T_i, \, i = 1, \dots, n}\) dengan menarik \(n\) buah data \textit{random} dari \(\text{Exp}(\lambda)\).
+        \item Susun barisan \textit{arrival times} \(\braces{W_i, \, i = 1, \dots, n}\) dengan menghitung jumlahan kumulatif atau \textit{cumulative sum} sesuai definisi:
+        \[W_i = T_1 + \dots + T_i\]
+        \item Tampilkan \textit{plot} kemunculan ke-\(i\), \( i = 1, \dots, n \) terhadap barisan \textit{arrival times}, sebagai \textit{plot} hasil simulasi kemunculan agar bisa melihat kapan munculnya.
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}[fragile]{Simulasi Proses Poisson di R}
+    Menetapkan \(\lambda\) dan \(n\),
+\begin{minted}{r}
+pp_lambda <- 4
+pp_n <- 10
+\end{minted}
+    Menghasilkan barisan \textit{interarrival times},
+\begin{minted}{r}
+set.seed(2024)
+pp_interarrival <- rexp(pp_n, rate = pp_lambda)
+\end{minted}
+    Menyusun barisan \textit{arrival times},
+\begin{minted}{r}
+pp_arrival <- cumsum(pp_interarrival)    
+\end{minted}
+    Dengan \textit{seed} 2024, data hasil simulasi yang tersimpan di \verb|pp_arrival| adalah:
+\begin{verbatim}
+0.1684713 0.4126256 0.5028073 0.6018938 0.8472178
+1.0737138 1.0943433 1.1837221 1.3761243 1.3988369
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]{Plot Hasil Simulasi Proses Poisson di R}
+    Dengan sedikit kode, hasil simulasi proses Poisson bisa ditampilkan sebagai \textit{plot} kemunculan ke-\(i\) terhadap barisan \textit{arrival times}. Hasil \textit{plot} ditampilkan di \textit{slide} selanjutnya. (Kemunculan ke-"nol" dengan \textit{arrival time} "nol" juga "diadakan" hanya agar titik awal proses Poisson tergambarkan.)
+\begin{minted}{r}
+plot(x = c(0, pp_arrival),
+     y = 0 : length(pp_arrival),
+     type = "s",
+     xlab = "Waktu",
+     ylab = "Kedatangan",
+     main = "Simulasi Proses Poisson dengan lambda = 4")
+\end{minted}
+\end{frame}
+
+\begin{frame}{Plot Hasil Simulasi Proses Poisson di R}
+    \includegraphics[scale=0.65]{gambar/proc_pois_lambda4_sim.png}
+\end{frame}
+
+\begin{frame}{Iklan (2): Kuliah Model Stokastik 1}
+    Proses Poisson adalah model stokastik, sehingga juga dipelajari di kuliah Model Stokastik 1 (3 SKS) di samping DTMC. Selain dasar teori yang lebih mendalam, seperti mempelajari konsep \textit{counting process} yang mendasarinya atau bahkan notasi \textit{little-o}, berbagai contoh pemodelan dan aplikasi proses Poisson juga dibahas di sana, sedangkan di sini hanya dibahas sebagian tentang proses Poisson untuk menunjang perkuliahan tentang teori antrian. Apabila tertarik mempelajari lebih lanjut, silakan ambil kuliah Model Stokastik 1 semester depan. \\[0.5em]
+    
+    Bagaimanapun juga, proses Poisson sebenarnya adalah kasus khusus dari CTMC, yang selanjutnya kita bahas.
 \end{frame}
 
 \subsection{Rantai Markov Waktu Kontinu (CTMC)}
+
+\begin{frame}{Definisi CTMC}
+    \begin{itemize}
+        \item CTMC melibatkan perpindahan \textit{state} sebagaimana DTMC, tapi memiliki hitungan waktu yang kontinu sebagaimana proses Poisson.
+        \item CTMC bisa didefinisikan sebagai \textit{family of random variables} \(\braces{X(t); \, 0 \le t < \infty}\), dengan \textit{support} (nilai-nilai yang mungkin) berupa \textit{state space} terhitung misalnya \(S\), yang memenuhi \textbf{\textit{memoryless property}} berikut untuk tiap \(i, j \in S\), tiap titik waktu \(s \ge 0\), tiap durasi \(t \ge 0\), dan sembarang "riwayat" \(x(u)\) selama masa lalu \(0 \le u < s\),
+        \begin{align*}
+            \text{Pr}&\brackets{X\pars{t+s} = j \; \middle| \; X\pars{s} = i, \, X(u) = x(u), \, 0 \le u < s} \\
+            &= \text{Pr}\brackets{X\pars{t+s} = j \; \middle| \; X\pars{s} = i}
+        \end{align*}
+        Intinya, masa depan \(t+s\) hanya dipengaruhi oleh masa kini \(s\), tidak oleh masa lalu \(0 \le u < s\).
+        \item CTMC bisa transisi kapanpun, dengan \textit{transition probability function}
+        \[P_{ij}\pars{t} = \text{Pr}\brackets{X\pars{t+s} = j \; \middle| \; X\pars{s} = i}\]
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{CTMC homogen}
+    tes
+\end{frame}
 
 \subsection{\textit{Birth-Death Process}}
 
