@@ -44,6 +44,9 @@
 \usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{amsmath}
+\usepackage{enumerate}
+\usepackage{systeme}
+\sysdelim..
 
 \usepackage{minted}
 % === akhir bismastyle.sty ===
@@ -118,10 +121,10 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Contoh DTMC stasioner: \textit{A Shoeshine Shop}}
-    Misalkan ada usaha kecil oles sepatu. Hanya ada satu pelayan dan dua kursi pelanggan.
+\begin{frame}{Contoh DTMC stasioner: Semir Sepatu}
+    Misalkan ada usaha kecil semir sepatu. Hanya ada satu pelayan dan dua kursi pelanggan.
     \begin{itemize}
-        \item Apabila kedua kursi kosong, orang cenderung tidak sadar bahwa itu adalah tempat oles sepatu, sehingga tidak datang.
+        \item Apabila kedua kursi kosong, orang cenderung tidak sadar bahwa itu adalah tempat semir sepatu, sehingga tidak datang.
         \item Namun, ketika salah satu kursi terisi, probabilitas kursi lainnya ikut terisi menjadi dua kali lipat dari biasanya.
         \item Ketika ada dua pelanggan, probabilitas satu pelanggan selesai adalah empat kali probabilitas keduanya belum selesai.
         \item Misalkan juga, tidak mungkin dua pelanggan datang sekaligus ataupun selesai sekaligus, dan tidak mungkin selesainya satu orang langsung diikuti datangnya pelanggan baru.
@@ -520,15 +523,21 @@ plot(x_pois, p_pois,
 
     Daripada menulis CDF eksponensial yaitu \(\text{Pr}(T \le t) = 1 - e^{-\lambda t}\), lazim ditulis
     \[\text{Pr}(T > t) = e^{-\lambda t}\]
+    sehingga kita bisa membuktikan bahwa variabel acak \(T\) berdistribusi eksponensial melalui pembuktian persamaan di atas daripada langsung membuktikan bentuk CDFnya. \\[0.25em]
 
-    %Selain itu, apabila variabel-variabel acak \(T_1, \dots, T_n\) saling independen dan \(T_i \sim \text{Exp}(\lambda_i)\) untuk \(i=1,\dots,n\), maka \[\text{min}\braces{T_1, \dots, T_n} \sim \text{Exp}\pars{\lambda_1 + \dots + \lambda_n}\]
-    Yang terpenting, distribusi eksponensial adalah \textbf{satu-satunya distribusi kontinu yang memenuhi \textit{memoryless property}} sebagai berikut:
+    Selain itu, apabila variabel-variabel acak \(T_1, \dots, T_n\) saling independen dan \(T_i \sim \text{Exp}(\lambda_i)\) untuk tiap \(i=1,\dots,n\), maka
+    \[\text{min}\braces{T_1, \dots, T_n} \sim \text{Exp}\pars{\lambda_1 + \dots + \lambda_n}\]
+\end{frame}
+
+\begin{frame}{Sifat \textit{Memoryless} dan Distribusi Eksponensial}
+    Yang terpenting, distribusi eksponensial memenuhi \textit{memoryless property} sebagai berikut:
     \[\text{Pr}\pars{T > t+s \; \middle| \; T > s} = \text{Pr}\pars{T > t}\]
-    untuk titik waktu \(s \ge 0\) dan durasi \(t > 0\), karena
+    untuk sembarang titik waktu \(s \ge 0\) dan durasi \(t > 0\), karena
     \begin{align*}
         \text{Pr}\pars{T > t+s \; \middle| \; T > s} &= \frac{\text{Pr}\pars{T>t+s, T>s}}{\text{Pr}\pars{T>s}} = \frac{\text{Pr}\pars{T>t+s}}{\text{Pr}\pars{T>s}} \\
         &= \frac{e^{-\lambda \pars{t+s}}}{e^{-\lambda s}} = e^{-\lambda t} = \text{Pr}\pars{T > t}
     \end{align*}
+    Bahkan, bisa dibuktikan (tidak dibahas di sini) bahwa distribusi eksponensial adalah \textbf{satu-satunya distribusi kontinu yang memenuhi \textit{memoryless property}}. Artinya, apabila \(T\) adalah variabel acak kontinu yang memenuhi \textit{memoryless property}, haruslah \(T \sim \text{Exp}(\lambda)\) untuk suatu \(\lambda > 0\).
 \end{frame}
 
 % (cara salah, batal)
@@ -684,12 +693,484 @@ plot(x = c(0, pp_arrival),
 \end{frame}
 
 \begin{frame}{CTMC homogen}
-    tes
+    \begin{itemize}
+        \item CTMC disebut homogen apabila \textit{transition probability function}, yaitu
+        \[P_{ij}\pars{t} = \text{Pr}\brackets{X\pars{t+s} = j \; \middle| \; X\pars{s} = i}\]
+        tidak tergantung \(s\).
+        \item Sebutan lain: rantai Markov dengan \textit{stationary transition probabilities}.
+        \item Kita hanya akan membahas CTMC homogen.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Waktu Transisi \(T_i\) Eksponensial}
+    Mirip dengan \textit{interarrival times} di proses Poisson, yaitu \(T_n\) melambangkan durasi antar kemunculan ke-\((n-1)\) dan kemunculan ke-\(n\), di CTMC didefinisikan \textit{transition times} atau waktu transisi \(T_i\) sebagai variabel acak kontinu untuk durasi \(X(t)\) berada di \textit{state} ke-\(i\) sebelum melakukan transisi, untuk tiap \(i \in S\).
+
+    Karena membahas CTMC homogen, haruslah \(T_i\) bersifat \textbf{\textit{memoryless}}, karena untuk tiap titik waktu \(s\) dan durasi \(t\),
+    \begin{align*}
+        \text{Pr}&\pars{T_i > t + s \; \middle| \; T_i > s} = \text{Pr}\pars{T_i > t + s - s \; \middle| \; T_i > s - s} \\
+        &= \text{Pr}\pars{T_i > t \; \middle| \; T_i > 0} = \text{Pr}\pars{T_i > t}
+    \end{align*}
+    Dengan demikian, juga karena \(T_i\) kontinu, haruslah \(T_i\) \textbf{berdistribusi eksponensial}, sehingga bisa ditulis
+    \[T_i \sim \text{Exp}\pars{v_i}, \quad \text{E}\brackets{T_i} = \frac{1}{v_i}\] 
+    untuk tiap \(i \in S\). Nilai \(v_i\) disebut \textbf{\textit{state transition rate}}.
+\end{frame}
+
+\begin{frame}{\textit{Instantaneous Transition Rates}}
+    Untuk CTMC, didefinisikan juga probabilitas \(P_{ij}\) dengan \(i, j \in S\) sebagai probabilitas bahwa, ketika sedang di \textit{state} \(i\) dan ingin melakukan transisi, transisi akan ke \textit{state} \(j\) (daripada ke \textit{state} lainnya). Berdasarkan sifat probabilitas, dan juga karena "transisi ke diri sendiri" tidak dianggap transisi di CTMC, berlaku
+    \[\sum_{j\in S} P_{ij} = 1, \quad P_{ii} = 0, \quad \text{untuk tiap } i \in S\]
+    Lalu, untuk tiap \(i, j \in S\) didefinisikan \textbf{\textit{instantaneous transition rate}} \(q_{ij}\) sebagai
+    \[q_{ij} = v_i P_{ij}\]
+    Apabila misalnya \(S = \braces{1, 2, \dots}\) atau \(S = \braces{0, 1, 2, \dots}\), bisa didefinisikan \textbf{\textit{instantaneous rate matrix}} \(Q\) berisi \(q_{ij}\) di baris ke-\(i\), kolom ke-\(j\), atau bisa ditulis
+    \[Q = \pars{q_{ij}}_{i,j \in S}\]
+\end{frame}
+
+\begin{frame}{Nilai \(v_i\) dan \(P_{ij}\) dari \(q_{ij}\)}
+    Apabila semua nilai \(q_{ij}\) dimiliki, bisa diperoleh kembali \(v_i\) dan \(P_{ij}\) untuk tiap \(i,j \in S\) sebagai berikut.
+    \begin{align*}
+        v_i &= \pars{v_i}(1) = v_i \sum_{j\in S} P_{ij} = v_i \pars{P_{ii} + \sum_{\substack{j\in S \\ j \ne i}} P_{ij}} = v_i \pars{0 + \sum_{\substack{j\in S \\ j \ne i}} P_{ij}} \\
+        &= v_i \sum_{\substack{j\in S \\ j \ne i}} P_{ij} = \sum_{\substack{j\in S \\ j \ne i}} v_i P_{ij} = \sum_{\substack{j\in S \\ j \ne i}} q_{ij} \\
+        P_{ij} &= \frac{q_{ij}}{v_i} = q_{ij} \pars{v_i}^{-1} = q_{ij} \pars{\sum_{\substack{j\in S \\ j \ne i}} q_{ij}}^{-1}
+    \end{align*}
+\end{frame}
+
+\begin{frame}{Contoh CTMC: \textit{A Shoeshine Shop}}
+    Misalkan ada usaha kecil semir sepatu dengan dua kursi (lagi), tetapi dengan aturan yang agak berbeda.
+    \begin{itemize}
+        \item Kedatangan calon pelanggan mengikuti proses Poisson dengan \textit{rate} \(\lambda\), tetapi calon pelanggan hanya akan benar-benar masuk apabila kedua kursi kosong.
+        \item Pelanggan yang masuk menduduki kursi pertama terlebih dahulu untuk membersihkan sepatu dari kotoran, kemudian ke kursi kedua untuk semir sepatu.
+        \item Waktu pelayanan kedua kursi saling independen dan berdistribusi eksponensial dengan \textit{rate} \(\mu_1\) dan \(\mu_2\).
+    \end{itemize}
+    Ada tiga kejadian yang mungkin, misalnya \(S=\braces{0,1,2}\):
+    \begin{enumerate}
+        \item[(0)] Kedua kursi kosong
+        \item[(1)] Kursi pertama saja diisi
+        \item[(2)] Kursi kedua saja diisi
+    \end{enumerate}
+    Variabel acak \(X(t)\) memiliki \textit{support} \(S\) untuk tiap titik waktu \(t \ge 0\). CTMC dinotasikan \(\braces{X(t) \, : \, t \ge 0}\).
+\end{frame}
+
+\begin{frame}{\textit{Transition Rates} untuk Contoh CTMC}
+    Perhatikan bahwa \textit{state} 0 pasti transisi ke \textit{state} 1, \textit{state} 1 pasti transisi ke \textit{state} 2, dan \textit{state} 2 pasti transisi ke \textit{state} 0, sehingga
+    \[P_{01} = 1, \quad P_{12} = 1, \quad P_{20} = 1\]
+    sedangkan \(P_{ij} = \frac{v_i}{q_{ij}}\), sehingga
+    \[q_{01} = v_0, \quad q_{12} = v_1, \quad q_{20} = v_2\]
+    Selain itu, kedatangan mengikuti proses Poisson dengan \textit{rate} \(\lambda\), sehingga durasi ketiadaan pelanggan adalah \(T_0 \sim \text{Exp}(\lambda)\), sehingga \(v_0 = \lambda\). Waktu pelayanan di kursi 1 dan kursi 2 mengikuti \(\text{Exp}(\mu_1)\) dan \(\text{Exp}(\mu_2)\), sehingga \(v_1 = \mu_1\) dan \(v_2 = \mu_2\). Maka,
+    \begin{center}
+    \begin{tabular}{llllll}
+                   &      &\(q_{01}\) &\(+\) &\(q_{02}\) &\(= \lambda\) \\
+        \(q_{10}\) &      &           &\(+\) &\(q_{12}\) &\(= \mu_1\) \\
+        \(q_{20}\) &\(+\) &\(q_{21}\) &      &           &\(= \mu_2\)
+    \end{tabular}
+    \end{center}
+\end{frame}
+
+\begin{frame}{\textit{Instantaneous Rate Matrix} untuk Contoh CTMC}
+    Mengingat bahwa
+    \[q_{01} = v_0 = \lambda, \quad q_{12} = v_1 = \mu_1, \quad q_{20} = v_2 = \mu_2,\]
+    SPL menjadi
+    \begin{center}
+        \begin{tabular}{llllll}
+                       &      &\(\lambda\) &\(+\) &\(q_{02}\) &\(= \lambda\) \\
+            \(q_{10}\) &      &            &\(+\) &\(\mu_1\)  &\(= \mu_1\) \\
+            \(\mu_2\)  &\(+\) &\(q_{21}\)  &      &           &\(= \mu_2\)
+        \end{tabular}
+    \end{center}
+    sehingga
+    \[q_{02} = 0, \quad q_{10} = 0, \quad q_{21} = 0\]
+    Matriks \(Q\) bisa disusun
+    \[Q = \begin{pmatrix}
+        q_{00} & \lambda & 0     \\
+        0      & q_{11}  & \mu_1 \\
+        \mu_2  & 0       & q_{22}
+    \end{pmatrix}\]
+\end{frame}
+
+\begin{frame}{\textit{Rowsums} dalam matriks \(Q\)}
+    Untuk melengkapi nilai-nilai \(q_{ii}\), matriks \(Q\) memiliki ketetapan bahwa \textbf{hasil jumlah tiap baris harus nol}, sehingga
+    \[Q = \begin{pmatrix}
+        q_{00} & \lambda & 0     \\
+        0      & q_{11}  & \mu_1 \\
+        \mu_2  & 0       & q_{22}
+    \end{pmatrix} = \begin{pmatrix}
+        -\lambda & \lambda & 0     \\
+        0       & -\mu_1   & \mu_1 \\
+        \mu_2   & 0        & -\mu_2
+    \end{pmatrix}\]
+    yaitu
+    \[q_{ii} = 0 - \sum_{\substack{j\in S \\ j \ne i}} q_{ij} = -v_i\]
+\end{frame}
+
+\begin{frame}{TPM untuk CTMC}
+    Di CTMC, apabila misalnya \(S=\braces{1,2,\dots}\) atau \(S=\braces{0,1,2,\dots}\), TPM juga bisa disusun: \[P = \pars{P_{ij}}_{i,j \in S} \]
+    Sehingga untuk contoh CTMC yang dibahas,
+    \[P = \begin{pmatrix}
+        P_{00} & P_{01} & P_{02} \\
+        P_{10} & P_{11} & P_{12} \\
+        P_{20} & P_{21} & P_{22}
+    \end{pmatrix} = \begin{pmatrix}
+        0 & 1 & 0 \\
+        0 & 0 & 1 \\
+        1 & 0 & 0
+    \end{pmatrix}\]
+    karena \textbf{hasil jumlah tiap baris harus satu}, sesuai sifat probabilitas.
+\end{frame}
+
+\begin{frame}{Matriks Fungsi Transisi untuk CTMC}
+    Untuk memperoleh fungsi transisi \(P_{ij}(t)\), ada konsep matriks fungsi transisi \(P(t) = \pars{P_{ij}(t)}_{i,j \in S}\) yang bisa diperoleh dengan menghitung
+    \[P(t) = e^{Qt} = \sum_{n=0}^{\infty} \frac{\pars{Qt}^n}{n!}\]
+    Apabila matriks \(Q\) dapat didiagonalisasi menjadi \(Q = PDP^{-1}\), dengan kolom-kolom matriks \(P\) berisi vektor eigen dan \(D = \pars{d_i}_{i\in S}\) adalah matriks diagonal berisi nilai-nilai eigen yang bersesuaian, berlaku
+    \[P(t) = e^{Qt} = e^{PDP^{-1}t} = P e^{Dt} P^{-1} = \pars{P} \pars{e^{d_i t}}_{i \in S} \pars{P^{-1}}\]
+    dengan \( \pars{e^{d_i t}}_{i \in S} \) adalah matriks diagonal.
+
+    Perpangkatan matriks seperti itu dapat dilakukan di R. Mari kita coba!
+\end{frame}
+
+\begin{frame}[fragile]{Contoh CTMC di R}
+    Kembali menggunakan \textit{package} \verb|markovchain|,
+\begin{minted}{r}
+library(markovchain)
+\end{minted}
+    Simulasi CTMC di R melibatkan matriks \(Q\), sehingga perlu didefinisikan terlebih dahulu. Misalkan \(\lambda = 0.3\), \(\mu_1 = 0.7\), dan \(\mu_2 = 0.5\), maka bisa ditulis
+\begin{minted}{r}
+mc2_Q <- matrix(
+  c(-0.3,  0.3,  0,
+     0,   -0.7,  0.7,
+     0.5,  0,   -0.5),
+  nrow = 3,
+  byrow = TRUE)
+\end{minted}
+    Kita definisikan juga \(S\) sebagai berikut...
+\begin{minted}{r}
+mc2_states <- c("0", "1", "2")
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Contoh CTMC di R}
+    Lalu, kita buat objek CTMC seperti berikut.
+\begin{minted}{r}
+mc2_obj <- new("ctmc",
+               states = mc2_states,
+               generator = mc2_Q)    
+\end{minted}
+    Informasi seperti matriks \(Q\) (disebut "generator") dan \textit{states} bisa diperoleh kembali dengan mengetik nama objeknya,
+\begin{minted}{r}
+mc2_obj
+\end{minted}
+    atau khusus \textit{states} bisa diperoleh dengan
+\begin{minted}{r}
+states(mc2_obj)
+\end{minted}
+    Diagram CTMC juga bisa ditampilkan (hasil ada di \textit{slide} selanjutnya) dengan mengetik
+\begin{minted}{r}
+plot(mc2_obj)
+\end{minted}
+\end{frame}
+
+\begin{frame}{Diagram CTMC di R}
+    Perhatikan bahwa label busur di sini adalah \(q_{ij}\), bukan \(P_{ij}\).
+
+    \begin{center}
+    \includegraphics[scale=0.8]{gambar/contoh_ctmc_plot.png}
+    \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Simulasi CTMC di R}
+    Untuk mensimulasikan CTMC di R, tentukan banyaknya transisi yang ingin disimulasikan,
+\begin{minted}{r}
+mc2_n <- 10
+\end{minted}
+    kemudian gunakan fungsi \verb|rctmc| seperti berikut,
+\begin{minted}{r}
+set.seed(456)
+mc2_sim <- rctmc(n = mc2_n, ctmc = mc2_obj,
+                 initDist = c(1, 0, 0))
+\end{minted}
+    yaitu misalnya dengan \textit{initial distribution} (distribusi awal) atau distribusi untuk \(X(0)\) sebagai berikut:
+    \[\text{Pr}\brackets{X(0) = 0} = 1, \quad
+    \text{Pr}\brackets{X(0) = 1} = 0, \quad
+    \text{Pr}\brackets{X(0) = 2} = 0\]
+    Hasil simulasi terdiri dari riwayat \textit{state} di \verb|mc2_sim[[1]]|,
+\begin{verbatim}
+"0" "1" "2" "0" "1" "2" "0" "1" "2" "0" "1"
+\end{verbatim}
+    dan \textit{transition times} di \verb|mc2_sim[[2]]|,
+\begin{verbatim}
+0.00000   6.90131  7.23002  8.90053 13.01417 15.74230
+16.34644 19.32979 19.96335 22.32489 23.27924
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]{Plot Hasil Simulasi CTMC di R}
+    Dengan sedikit kode, hasil simulasi CTMC bisa ditampilkan di R (dilampirkan di \textit{slide} selanjutnya).
+\begin{minted}{r}
+mc2_sim_factors <- factor(mc2_sim[[1]],
+                          levels = mc2_states)
+mc2_sim_int <- as.integer(mc2_sim_factors)
+plot(x = mc2_sim[[2]],
+     y = mc2_sim_int,
+     xlab = "Waktu (kontinu)",
+     ylab = "State",
+     main = "Simulasi CTMC",
+     yaxt = "n")
+axis(2, at = 1 : length(mc2_states), labels = mc2_states)
+\end{minted}
+\end{frame}
+
+\begin{frame}{Plot Hasil Simulasi CTMC di R}
+    \begin{center}
+        \includegraphics[scale=0.6]{gambar/contoh_ctmc_simulasi.png}
+    \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Probabilitas Jangka Panjang CTMC di R}
+    Di R, kita dapat menghitung probabilitas jangka panjang \(p_i\) untuk tiap \textit{state} \(i \in S\) dari CTMC dengan
+\begin{minted}{r}
+steadyStates(mc2_obj)
+\end{minted}
+    Hasil:
+\begin{verbatim}
+0            1            2
+0.4929577+0i 0.2112676+0i 0.2957746+0i
+\end{verbatim}
+    artinya,
+    \[p_0 \approx 0.4929577, \quad p_1 \approx 0.2112676, \quad p_2 \approx 0.2957746\]
+\end{frame}
+
+\begin{frame}[fragile]{Perpangkatan Matriks di R}
+    Kita bisa menghitung \(e^A\) di R dengan \textit{package} \verb|expm|
+\begin{minted}{r}
+# install kalau belum
+#install.packages("expm")
+
+library("expm")
+\end{minted}
+    Untuk menghitung \(e^{Qt}\), pilih nilai \(t\), misalnya \(t = 5\), lalu tulis
+\begin{minted}{r}
+expm(mc2_Q * 5)
+\end{minted}
+    Hasilnya juga berupa matriks, dalam hal ini matriks \(P(t) = \pars{P_{ij}(t)}_{i,j\in S}\) ketika \(t=5\):
+\begin{verbatim}
+          [,1]      [,2]      [,3]
+[1,] 0.4934934 0.2211127 0.2853939
+[2,] 0.4756564 0.1986765 0.3256671
+[3,] 0.5044230 0.2038528 0.2917242
+\end{verbatim}
+    Perhatikan bahwa hasil-hasil di kolom ke-\(i\) cukup mirip dengan nilai \(p_i\). Semakin besar nilai \(t\), semakin mendekati; karena itulah \(p_i\) disebut "probabilitas jangka panjang".
+\end{frame}
+
+\begin{frame}{Iklan (3): Kuliah Model Stokastik 1}
+    Asal-usul rumus \(P(t) = e^{Qt}\) untuk matriks fungsi transisi dari CTMC memang tidak dijelaskan di sini. Rumus itu adalah solusi untuk persamaan-persamaan Kolmogorov, kebetulan berupa sistem persamaan diferensial, yang dibahas di kuliah Model Stokastik 1 (3 SKS), bisa diambil di semester depan apabila tertarik, di samping mempelajari DTMC dan proses Poisson. \\[0.5em]
+    
+    Kasus khusus CTMC yang cukup sering diterapkan di teori antrian adalah \textit{birth-death process}, yang kita bahas selanjutnya.
 \end{frame}
 
 \subsection{\textit{Birth-Death Process}}
 
+\begin{frame}{Kasus Khusus CTMC: \textit{Birth-Death Process}}
+    \textit{Birth-death process} (BDP) bisa didefinisikan sebagai CTMC \(\braces{X(t); \, t \ge 0 }\) dengan \textit{state space} \(S = \braces{0, 1, 2, \dots}\) dan transisi dari \textit{state} \(i\) ke \textit{state} \(j\) yang mungkin hanyalah
+    \begin{itemize}
+        \item \(j = i+1\), yang disebut \textit{birth} atau "kelahiran"; dan
+        \item \(j = i-1\), yang disebut \textit{death} atau "kematian"
+    \end{itemize}
+    Karena BDP berupa CTMC, \textit{transition time} (durasi menetap di \textit{state} tertentu sebelum melakukan transisi) untuk kelahiran ataupun kematian berdistribusi eksponensial, bisa ditulis
+    \begin{itemize}
+        \item \(T_i^{(b)} \sim \text{Exp}\pars{\lambda_i}\), untuk kelahiran menjadi \(j = i+1\), dan
+        \item \(T_i^{(d)} \sim \text{Exp}\pars{\mu_i}\), untuk kematian menjadi \(j = i-1\)
+    \end{itemize}
+    Dalam teori antrian, "kelahiran" diartikan sebagai kedatangan pelanggan dan "kematian" diartikan sebagai kepergian pelanggan, karena \textit{state} \(X(t)\) diartikan sebagai banyaknya pelanggan pada waktu \(t\).
+\end{frame}
+
+\begin{frame}{Diagram Transisi BDP dan \textit{Flow Balance}}
+    \includegraphics[scale=0.5]{gambar/diagram_transisi_antrian.png}
+    Ingat kembali diagram di atas, yang sebenarnya adalah diagram transisi untuk BDP. Untuk menentukan \textbf{probabilitas jangka panjang} berada di \textit{state} \(n\), misal dinotasikan \(p_n\), biasa digunakan konsep \textit{flow balance}, yaitu
+    \[\pars{\text{keluar dari \textit{state} } n} = \pars{\text{masuk ke \textit{state} } n}\]
+    Untuk \(n = 0\), diperoleh
+    \[\lambda_0 p_0 = \mu_1 p_1\]
+    dan untuk \(n \ge 1\), diperoleh
+    \[ \lambda_n p_n + \mu_n p_n = \lambda_{n-1} p_{n-1} + \mu_{n+1} p_{n+1} \]
+    Perhatikan bahwa dalam \textbf{\textit{balance equations}} di atas, tiap \textit{state transition rate}, baik \(\lambda_i\) maupun \(\mu_i\), dikalikan oleh \(p_i\) dengan indeks yang sama.
+\end{frame}
+
+\begin{frame}{Solusi \textit{Balance Equations} untuk \(p_n, \, n \ge 1\)}
+    Kedua persamaan bisa ditulis menjadi seperti berikut.
+    \begin{align*}
+        p_1 &= \frac{\lambda_0}{\mu_1} \\
+        p_{n+1} &= \frac{\lambda_n + \mu_n}{\mu_{n+1}}p_n - \frac{\lambda_{n-1}}{\mu_{n+1}}p_{n-1}, \quad n \ge 1
+    \end{align*}
+    Sehingga, ketika \(n = 1\),
+    \[p_2 = \frac{\lambda_1 + \mu_1}{\mu_2}p_1 - \frac{\lambda_0}{\mu_2}p_0 = \frac{\lambda_1 \lambda_0}{\mu_2 \mu_1} p_0\]
+    Ketika \(n = 2\),
+    \[p_3 = \frac{\lambda_2 + \mu_2}{\mu_3}p_2 - \frac{\lambda_1}{\mu_3}p_1 = \frac{\lambda_2 \lambda_1 \lambda_0}{\mu_3 \mu_2 \mu_1} p_0\]
+    Muncul pola berikut untuk \(n \ge 1\) (bisa dibuktikan dengan induksi matematika)
+    \[\boxed{
+        p_n = \frac{\lambda_{n-1} \cdots \lambda_0}{\mu_n \cdots \mu_1} p_0 = p_0 \prod_{i=1}^{n} \frac{\lambda_{i-1}}{\mu_i}
+    }\]
+\end{frame}
+
+\begin{frame}{Solusi \textit{Balance Equations} untuk \(p_0\)}
+    Kita tinggal menentukan \(p_0\). Berdasarkan sifat probabilitas,
+    \[\sum_{n=0}^{\infty} p_n = 1\]
+    sehingga
+    \begin{align*}
+        1 &= p_0 + \sum_{n=1}^{\infty} p_n = p_0 + \sum_{n=1}^{\infty} \brackets{p_0 \prod_{i=1}^{n} \frac{\lambda_{i-1}}{\mu_i}} = p_0 + p_0 \sum_{n=1}^{\infty} \prod_{i=1}^{n} \frac{\lambda_{i-1}}{\mu_i} \\
+        &= p_0 \pars{1 + \sum_{n=1}^{\infty} \prod_{i=1}^{n} \frac{\lambda_{i-1}}{\mu_i}}
+    \end{align*}
+    sehingga
+    \[\boxed{
+        p_0 = \pars{1 + \sum_{n=1}^{\infty} \prod_{i=1}^{n} \frac{\lambda_{i-1}}{\mu_i}}^{-1}
+    }\]
+\end{frame}
+
+\begin{frame}{\textit{Instantaneous Rate Matrix} \(Q\) untuk BDP}
+    Karena BDP tergolong CTMC, BDP memiliki \textit{instantaneous rate matrix} \(Q = \pars{Q_{ij}}_{i,j\in S}\) dan juga \textit{state transition rate} \(v_i = \lambda_i + \mu_i\) karena
+    \[\text{min}\braces{T_i^{(b)}, T_i^{(d)}} \sim \text{Exp}\pars{\lambda_i + \mu_i}\]
+    Selain itu, karena transisi yang mungkin hanyalah \(j=i+1\) dan \(j=i-1\), probabilitasnya proporsional dengan \textit{state transition rate}, seperti berikut:
+    \[P_{i,i+1} = \frac{\lambda_i}{\lambda_i + \mu_i}, \quad P_{i,i-1} = \frac{\mu}{\lambda_i + \mu_i}\]
+    Perhatikan bahwa, untuk tiap \(i \ge 1\),
+    \begin{align*}
+        q_{i,i+1} &= v_i P_{i,i+1} = \pars{\lambda_i + \mu_i} \pars{\frac{\lambda_i}{\lambda_i + \mu_i}} = \lambda_i \\
+        q_{i,i-1} &= v_i P_{i,i-1} = \pars{\lambda_i + \mu_i} \pars{\frac{\mu}{\lambda_i + \mu_i}} = \mu_i \\
+        q_{i,j} &= v_i P_{ij} = \pars{v_i} (0) = 0, \quad j \notin \braces{i-1, i, i+1} \\
+        q_{i,i} &= -\pars{q_{i,i+1} + q_{i,i-1}} = -\pars{\lambda_i + \mu_i}
+    \end{align*}
+\end{frame}
+
+\begin{frame}{\textit{Instantaneous Rate Matrix} \(Q\) untuk BDP}
+    Ketika \(i=0\), transisi hanya mungkin ke \(j=1\) karena tidak boleh ke diri sendiri (sifat CTMC) dan tidak mungkin menurun lagi (\(\mu_0 = 0\)), sehingga
+    \[P_{01} = 1, \quad q_{01} = v_0 P_{01} = v_0 = \lambda_0 + \mu_0 = \lambda_0, \quad q_{00} = -q_{01} = -\lambda_0\]
+    Dengan demikian, bentuk umum \textit{instantaneous rate matrix} untuk sembarang BDP bisa ditulis
+    \[Q = \begin{pmatrix}
+        -\lambda_0 & \lambda_0 & 0 & 0 & 0 & \cdots \\
+        \mu_1 & -\pars{\lambda_1 + \mu_1} & \lambda_1 & 0 & 0 & \cdots \\
+        0 & \mu_2 & -\pars{\lambda_2 + \mu_2} & \lambda_2 & 0 & \cdots \\
+        0 & 0 & \mu_3 & -\pars{\lambda_3 + \mu_3} & \lambda_3 & \cdots \\
+        \vdots & \vdots & \vdots & \vdots & \vdots & \ddots
+    \end{pmatrix}\]
+    yaitu matriks tridiagonal. Dengan matriks ini, simulasi BDP di R bisa saja dilakukan sebagaimana simulasi CTMC di R.
+\end{frame}
+
+% simulasi dengan finite state saja agak aneh, apalagi simulasi CTMC sudah ditunjukkan sebelumnya...
+%\begin{frame}[fragile]{Simulasi BDP di R}
+    %tes
+%\end{frame}
+
+\begin{frame}{Kasus Khusus BDP}
+    Terdapat dua kasus khusus BDP yang umum dikenal, yaitu
+    \begin{enumerate}
+        \item \textit{Pure birth process} ketika hanya ada "kelahiran" saja, yaitu ketika tidak ada "kematian": \(\mu_i = 0\) untuk tiap \(i \in S\)
+        \begin{itemize}
+            \item \textbf{Proses Poisson} dengan \textit{rate} \(\lambda\) adalah \textit{pure birth process} dengan \(\lambda_i = \lambda\).
+        \end{itemize}
+        \item \textit{Pure death process} ketika hanya ada "kematian" saja, yaitu ketika tidak ada "kelahiran": \(\lambda_i = 0\) untuk tiap \(i \in S\)
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}{Iklan (4): Kuliah Model Stokastik 1}
+    Tidak hanya proses Poisson, terdapat beberapa variasi BDP lainnya, termasuk variasi \textit{pure birth process} dan variasi \textit{pure death process}. Itu semua dipelajari di kuliah Model Stokastik 1 (3 SKS), termasuk berbagai contoh pemodelan dan aplikasinya, demikian juga untuk DTMC dan CTMC secara umum. Apabila tertarik, silakan ambil kuliah Model Stokastik 1 di semester genap bersama mahasiswa prodi S1 Statistika dan/atau S1 Ilmu Aktuaria. \\[0.5em]
+
+    (Ini adalah iklan terakhir untuk kuliah Model Stokastik 1. Silakan dipertimbangkan.) \\[0.5em]
+
+    Sangat dekat dengan konsep BDP adalah model antrian M/M/1 dan M/M/c, yaitu tujuan akhir pembahasan di sini. Sebelum itu, berikut ini kita bahas tentang konsep antrian secara umum.
+\end{frame}
+
 \subsection{Antrian dan Notasinya}
+
+\begin{frame}{Konsep dasar teori antrian}
+    Tiap model yang dibahas di teori antrian terdiri dari \textbf{antrian} dan \textbf{sistem}. Semua peserta secara umum disebut \textbf{pelanggan}.
+    \begin{itemize}
+        \item "Sistem" terdiri dari tempat mengantri (disebut "antrian") dan tempat pelayanan.
+        \item Dalam suatu sistem, bisa saja ada pelanggan yang sedang dilayani dan juga ada pelanggan yang masih mengantri menunggu dilayani (masih di antrian).
+        \item Banyaknya pelanggan yang biasa dihitung adalah \textbf{banyaknya pelanggan di sistem} secara keseluruhan, tidak hanya yang ada di antrian.
+        \item Alurnya adalah: (1) masuk ke dalam sistem; (2) mengantri apabila tempat pelayanan masih penuh; (3) langsung dilayani apabila sudah di depan antrian dan ada tempat pelayanan yang kosong; lalu (4) meninggalkan sistem ketika pelayanan sudah selesai.
+        \item Tempat pelayanan bisa terdiri dari satu atau sejumlah \textbf{\textit{server}} (pelayan), masing-masing bisa melayani satu pelanggan.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Penamaan sistem antrian}
+    Suatu model antrian atau sistem antrian biasa dilambangkan misalnya A/B/X/Y/Z, yang artinya berturut-turut (sesuai posisi) adalah
+    \begin{enumerate}
+        \item A: Pola kedatangan; distribusi \textit{interarrival time} (durasi antara satu kedatangan dengan yang berikutnya)
+        \item B: Pola pelayanan; distribusi \textit{service time} (durasi pelayanan; seperti \textit{interarrival time} tetapi untuk kepergian pelanggan)
+        \item X: Banyaknya \textit{server} \(\pars{1, 2, \dots, c, \dots, \infty}\)
+        \item Y: Kapasitas sistem; maksimum banyaknya pelanggan dalam sistem \(\pars{1, 2, \dots, K, \dots, \infty}\)
+        \item Z: \textit{Queue discipline}, yaitu cara memilih pelanggan berikutnya dari antrian untuk dilayani
+    \end{enumerate}
+    Terkadang, penulisan dipotong, misalnya hanya ditulis A/B/X. Biasanya, dianggap \(Y = \infty\) dan Z = FCFS (\textit{first come first serve;} urutan pelayanan pelanggan dimulai dari yang paling pertama datang).
+\end{frame}
+
+\begin{frame}{Aspek-aspek sistem antrian dan notasinya}
+    Perhatikan bahwa \textit{subscript} huruf \(q\) melambangkan \textit{queue} (antrian). Apabila tidak ada \textit{subscript} \(q\), maka ukuran tersebut adalah untuk sistem.
+    \begin{itemize}
+        \item \(\lambda\): \textit{rate} rata-rata untuk kedatangan
+        \item \(S\): variabel acak durasi pelayanan
+        \item \(\mu = 1/\text{E}\brackets{S}\): \textit{rate} rata-rata untuk pelayanan
+        \item \(c\): banyaknya \textit{server}
+        %\item \(K\): kapasitas sistem
+        \item \(r = \lambda/\mu\): \textit{offered load}, %(\textit{rate} rata-rata kedatangan beban)
+        rata-rata banyaknya \textit{server} "sibuk" (sedang melayani)
+        \item \(\rho = \lambda/c\mu\): \textit{traffic intensity} (ukuran kemacetan) atau \textit{utilization}, proporsi waktu \textit{server} sibuk
+        \item \(T, T_q\): variabel acak durasi pelanggan di sistem/antrian
+        \item \(W, W_q\): rata-rata durasi pelanggan di sistem/antrian
+        \item \(N, N_q\): variabel acak banyaknya pelanggan di sistem/antrian
+        \item \(L, L_q\): rata-rata banyaknya pelanggan di sistem/antrian
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{\textit{Little's Law:} \(L = \lambda W\) dan \(L_q = \lambda W_q\)}
+    \begin{itemize}
+        \item \textit{Little's Law} menyatakan bahwa rata-rata banyaknya pelanggan di sistem sama dengan \textit{rate} rata-rata untuk kedatangan dikali dengan rata-rata durasi pelanggan di sistem.
+        \[L = \lambda W\]
+        \item Berlaku juga khusus antriannya daripada untuk sistem secara keseluruhan, yaitu
+        \[L_q = \lambda W_q\]
+        \item Bisa dianalogikan dengan rumus fisika \(s = vt\)
+        \item Contoh: \textbf{mengantri lulus SD}. Jika sekitar \(\lambda = 30\) siswa/tahun masuk suatu SD (mulai dari kelas 1 SD), dan rata-rata durasi sekolah SD adalah \(W = 6\) tahun (ingat ada akselerasi dan tidak naik kelas), maka rata-rata banyaknya siswa yang sedang bersekolah di SD tersebut adalah
+        \[L = \lambda W = \pars{30 \text{ siswa/tahun}}\pars{6 \text{ tahun}} = 180 \text{ siswa}\]
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Rumus-rumus umum untuk \(G/G/c\)}
+    \(G/G/c\) adalah sistem antrian dengan distribusi \textit{interarrival time} dan distribusi \textit{service time} yang umum \textit{(general)} dengan \(c\) \textit{server}. Untuk \(G/G/c\), berlaku
+    \begin{itemize}
+        \item \textit{Little's law:} \(L=\lambda W\) dan \(L_q = \lambda W_q\)
+        \item \(T = T_q + S\), durasi pelanggan di sistem adalah durasi mengantri ditambah durasi dilayani
+        \item \(W = W_q + 1/\mu\), ekspektasi dari persamaan di atas
+        \item \(L = L_q + r\),
+        % dari persamaan di atas dan kedua rumus \textit{Little's law}
+        dengan substitusi persamaan di atas ke \textit{Little's law}
+        \item \(r = \lambda/\mu\)
+        \item \(\rho = \lambda/c\mu\)
+    \end{itemize}
+    Ketika \(c=1\), yaitu untuk \(G/G/1\), juga berlaku
+    \begin{itemize}
+        \item \(p_0 = 1 - \rho\)
+        \item \(L = L_q + \rho\), karena \(r = \rho\) ketika \(c=1\)
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Notasi dan rumus \textit{bookkeeping} (pencatatan) untuk (simulasi) sistem antrian}
+    \begin{itemize}
+        \item \(A^{(n)}\): kapan pelanggan ke-\(n\) datang \textit{(arrival)}
+        \item \(S^{(n)}\): durasi pelangan ke-\(n\) dilayani \textit{(service)}
+        \item \(T^{(n)}\): \textit{interarrival time} atau durasi antar kedatangan ke-\(n\) dengan ke-\((n+1)\), 
+        \(T^{(n)} = A^{(n+1)} - A^{(n)}\)
+        \item \(U^{(n)}\): kapan pelanggan ke-\(n\) mulai dilayani \textit{(use)}, 
+        \(U^{(n+1)} = \text{max}\braces{D^{(n)}, \, A^{(n+1)}}\)
+        \item \(D^{(n)}\): kapan pelanggan ke-\(n\) meninggalkan sistem \textit{(departure)}, 
+        \(D^{(n)} = U^{(n)} + S^{(n)}\)
+        \item \(W_q^{(n)}\): durasi pelanggan ke-\(n\) di antrian (menunggu; \textit{waiting}), 
+        \(W_q^{(n)} = U^{(n)} - A^{(n)}\)
+        \item \(W^{(n)}\): durasi pelanggan ke-\(n\) di sistem, 
+        \(W^{(n)} = W_q^{(n)} + S^{(n)}\)
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Antrian sebagai \textit{Birth-Death Process}}
+    \begin{itemize}
+        \item Beberapa sistem antrian sederhana kebetulan berupa BDP tertentu
+        \item Huruf M dalam notasi M/M/X/Y/Z melambangkan sifat Markov atau \textit{memoryless property}, mengindikasikan distribusi eksponensial, berturut-turut dengan \textit{rate} \(\lambda\) dan \(\mu\)
+        \item (belum jadi)
+    \end{itemize}
+\end{frame}
 
 \section{Antrian M/M/c}
 

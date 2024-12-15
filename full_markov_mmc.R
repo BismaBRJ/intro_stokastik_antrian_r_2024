@@ -106,14 +106,14 @@ plot(x = c(0, pp_arrival),
 ## === Simulasi CTMC dengan markovchain ===
 
 mc2_Q <- matrix(
-  c(-0.5, 0.3, 0.2,
-    0.4, -0.7, 0.3,
-    0.1, 0.4, -0.5),
+  c(-0.3,  0.3,  0,
+     0,   -0.7,  0.7,
+     0.5,  0,   -0.5),
   nrow = 3,
   byrow = TRUE)
 mc2_Q
 
-mc2_states <- c("A", "B", "C")
+mc2_states <- c("0", "1", "2")
 
 mc2_obj <- new("ctmc",
                states = mc2_states,
@@ -124,7 +124,7 @@ plot(mc2_obj)
 
 ?rctmc
 mc2_n <- 10
-set.seed(123)
+set.seed(456)
 mc2_sim <- rctmc(n = mc2_n, ctmc = mc2_obj,
                  initDist = c(1, 0, 0))
 print(mc2_sim)
@@ -133,11 +133,8 @@ mc2_sim[[2]]
 data.frame(new.state = mc2_sim[[1]],
            time = mc2_sim[[2]])
 
-library(expm)
-mc2_P <- expm(mc2_Q * mc2_n)
-mc2_P
-
-mc2_sim_factors <- factor(mc2_sim[[1]], levels = mc2_states)
+mc2_sim_factors <- factor(mc2_sim[[1]],
+                          levels = mc2_states)
 mc2_sim_factors
 mc2_sim_int <- as.integer(mc2_sim_factors)
 mc2_sim_int
@@ -158,6 +155,10 @@ states(mc2_obj)
 # steady-state distribution (probabilitas jangka panjang)
 steadyStates(mc2_obj)
 
+library(expm)
+mc2_P <- expm(mc2_Q * 5)
+mc2_P
+
 ## === Simulasi Birth-Death Process dengan markovchain ===
 
 bdp_lambda <- 0.5
@@ -165,9 +166,9 @@ bdp_mu <- 0.3
 
 # Birth-Death Process adalah CTMC dengan matriks Q tridiagonal
 bdp_Q <- matrix(
-  c(-bdp_lambda, bdp_lambda,          0,
-    bdp_mu,     -(bdp_mu+bdp_lambda), bdp_lambda,
-    0,           bdp_mu,              -bdp_mu),
+  c(-bdp_lambda,  bdp_lambda,             0,
+    bdp_mu,      -(bdp_mu + bdp_lambda),  bdp_lambda,
+    0,            bdp_mu,                -bdp_mu),
   byrow = TRUE,
   nrow = 3
 )
